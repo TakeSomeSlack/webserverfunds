@@ -2,19 +2,51 @@
 <html>
     <head>
         <title> this is my first page</title>
+        <script>
+            let toggle=false;
+            function myFunction() {
+               let x = document.getElementById("demo1");
+               
+                if(!toggle){
+                    x.innerHTML = "LET ME LEAVE THIS PLACE!!!"; 
+                }
+                else{x.innerHTML = "This is my first time playing Hollow kinght."+ 
+            "I have been conviced by my good friend Charles to try this " + "peak" + "of an experience." +
+            "He says that the game is super easy but its only been 30 minutes and i am already lost and getting my butt kicked." +
+            "So follow me on my journy through this so no so called " + "Peak of an experience"+ "and life changing game." }
+                toggle=!toggle
+            }
+
+
+            function Imagetoggle() {
+            document.getElementById("Myimg").src = "pictures/silk.jpg";
+                }
+
+            function changebutton(element){
+                element.innerHTML= "this button was clicked"
+            }
+        </script>
     </head>
-    <body background="pictures\background.jpg">
+    <body background="pictures\background.jpg" >
     <div style="border: 25px c; background-color: aquamarine;">
         <h1 style="text-align: center; color: rgb(255, 0, 0);"> This is my Hollow Knight experience</h1>
         <h2 style="text-align: center; color: rgb(255, 0, 0);">My first ever 2D action-adventure Metroidvania Platformer</h2>
     </div>
-        <img src="pictures\hollow.jpg" style="width: 1500px;  height: 700px;" class="img center">
-        <p style="font-size: large; color: rgb(255, 0, 0);">
+        <img id="Myimg" src="pictures\hollow.jpg" style="width: 1500px;  height: 700px;" class="img center" >
+
+        <button type="button" onclick="Imagetoggle(this)">change background</button>
+
+        <p style="font-size: large; color: rgb(255, 0, 0);" id="demo1">
             This is my first time playing Hollow kinght. 
             I have been conviced by my good friend Charles to try this "peak" of an experience. 
             He says that the game is super easy but its only been 30 minutes and i am already lost and getting my butt kicked.
             So follow me on my journy through this so no so called "Peak of an experience" and life changing game.
         </p>
+        <button type="button" onclick="myFunction()">click me</button>
+        <br>
+        <p style="font-size: large; color: rgb(255, 0, 0);" id="demo1"> This button will change when clicked</p>
+        <br>
+         <button type="button" onclick="changebutton(this)">click me</button>
         <ul style="font-size: large; color: rgb(255, 0, 0);">
             <li> hours played: 2h</li>
             <li> boss beaten: 1</li>
