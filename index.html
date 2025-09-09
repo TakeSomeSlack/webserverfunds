@@ -3,38 +3,97 @@
     <head>
         <title> this is my first page</title>
         <script>
-            let toggle=false;
-            function myFunction() {
-               let x = document.getElementById("demo1");
-               
-                if(!toggle){
-                    x.innerHTML = "LET ME LEAVE THIS PLACE!!!"; 
+            //change text from a click
+                    let toggle=false;
+
+                    function myFunction() {
+
+                    let x = document.getElementById("demo1");
+                        if(!toggle){
+                            x.innerHTML = "LET ME LEAVE THIS PLACE!!!"; 
+                        }
+
+                        else{x.innerHTML = "This is my first time playing Hollow kinght."+ 
+                    "I have been conviced by my good friend Charles to try this " + "peak" + "of an experience." +
+                    "He says that the game is super easy but its only been 30 minutes and i am already lost and getting my butt kicked." +
+                    "So follow me on my journy through this so no so called " + "Peak of an experience"+ "and life changing game."
+                 }
+                        toggle=!toggle
+                    }
+                    
+            //change image from a click
+                    let imgToggle=false;
+                    function Imagetoggle() {
+
+                        if(imgToggle){
+                            document.getElementById("Myimg").src = "pictures/hollow.jpg";
+                        }
+
+                        else{
+                            document.getElementById("Myimg").src = "pictures/silk.jpg";
+                        }
+
+                        imgToggle=!imgToggle
+                    }
+
+            //button that chnages text and runs away
+            let clickCount = 0;
+
+            function changebutton(element) {
+                clickCount++;
+
+                let messages = [
+                    "this button was clicked",
+                    "stop clicking me!",
+                    "seriously, stop!",
+                    "what do you want from me?!",
+                    "leave me alone!",
+                    "I’m done..."
+                ];
+
+                
+                let msgIndex = Math.min(clickCount, messages.length - 1);
+                element.innerHTML = messages[msgIndex];
+
+                for(let x=0; x<1; x++){
+                    if (clickCount <= 5) {
+                let x = Math.floor(Math.random() * 350 - 40); 
+                let y = Math.floor(Math.random() * 50 - 50); 
+                element.style.transform = `translate(${x}px, ${y}px)`;
                 }
-                else{x.innerHTML = "This is my first time playing Hollow kinght."+ 
-            "I have been conviced by my good friend Charles to try this " + "peak" + "of an experience." +
-            "He says that the game is super easy but its only been 30 minutes and i am already lost and getting my butt kicked." +
-            "So follow me on my journy through this so no so called " + "Peak of an experience"+ "and life changing game." }
-                toggle=!toggle
-            }
-
-
-            function Imagetoggle() {
-            document.getElementById("Myimg").src = "pictures/silk.jpg";
+                else{
+                    element.style.transform = `translate(0px, 0px)`;
                 }
-
-            function changebutton(element){
-                element.innerHTML= "this button was clicked"
             }
+     }
+
+                //onblur alert
+                function checkonblur() {
+                let input = document.getElementById("name");
+                let errorMsg = document.getElementById("errorMsg");
+
+                if (input.value.trim() === "") {
+                    errorMsg.style.display = "block";  
+                } else {
+                    errorMsg.style.display = "none";
+                }
+            }
+                //clear input from the text box(make the website fancy)
+                function clearInput() {
+                document.getElementById("name").value = "";
+                document.getElementById("errorMsg").style.display = "none";
+                }
         </script>
     </head>
-    <body background="pictures\background.jpg" >
-    <div style="border: 25px c; background-color: aquamarine;">
-        <h1 style="text-align: center; color: rgb(255, 0, 0);"> This is my Hollow Knight experience</h1>
-        <h2 style="text-align: center; color: rgb(255, 0, 0);">My first ever 2D action-adventure Metroidvania Platformer</h2>
-    </div>
-        <img id="Myimg" src="pictures\hollow.jpg" style="width: 1500px;  height: 700px;" class="img center" >
+        <body background="pictures\background.jpg" >
 
-        <button type="button" onclick="Imagetoggle(this)">change background</button>
+        <div style="border: 25px c; background-color: aquamarine;">
+            <h1 style="text-align: center; color: rgb(255, 0, 0);"> This is my Hollow Knight experience</h1>
+            <h2 style="text-align: center; color: rgb(255, 0, 0);">My first ever 2D action-adventure Metroidvania Platformer</h2>
+        </div>
+
+        <img id="Myimg" src="pictures\hollow.jpg" style="width: 1500px;  height: 700px;" class="img center" >
+        <button type="button" onclick="Imagetoggle(this)">change characters</button>
 
         <p style="font-size: large; color: rgb(255, 0, 0);" id="demo1">
             This is my first time playing Hollow kinght. 
@@ -42,15 +101,27 @@
             He says that the game is super easy but its only been 30 minutes and i am already lost and getting my butt kicked.
             So follow me on my journy through this so no so called "Peak of an experience" and life changing game.
         </p>
-        <button type="button" onclick="myFunction()">click me</button>
+        <button type="button" onclick="myFunction()">Get my true opinion of the game</button>
         <br>
-        <p style="font-size: large; color: rgb(255, 0, 0);" id="demo1"> This button will change when clicked</p>
+
+
+        <p style="font-size: large; color: rgb(255, 0, 0);" id="demo1"> This button will try to leave and change</p>
         <br>
          <button type="button" onclick="changebutton(this)">click me</button>
+        <br>
+        <br>
+
+        <p style="font-size: large; color: rgb(255, 0, 0);"> Enter your username:</p>
+        <input type="text" id="name" onblur="checkonblur()">
+        <p id="errorMsg" style="color: red; display: none; margin: 4px 0 0;">This field is required</p>
+        <button type="submit" onclick="clearInput()">submit</button>
+        <br>
+
+        <p style="font-size: large; color: rgb(255, 0, 0);"> My stats so far:</p>
         <ul style="font-size: large; color: rgb(255, 0, 0);">
-            <li> hours played: 2h</li>
-            <li> boss beaten: 1</li>
-            <li> number of deaths: 10</li>
+            <li> hours played: 14h</li>
+            <li> boss beaten: 10+</li>
+            <li> number of deaths: i don't even know anymore</li>
             <li> controller broken: 0</li>
         </ul>
         <a href="form.html" style="font-size: medium; color: rgb(255, 0, 0);">Use this form to do a survey about the game</a>
