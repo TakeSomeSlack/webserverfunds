@@ -83,6 +83,13 @@
                 document.getElementById("name").value = "";
                 document.getElementById("errorMsg").style.display = "none";
                 }
+
+
+                async function getText(file) {
+                let x = await fetch(file);
+                let y = await x.text();
+                document.getElementById("demo").innerHTML = y;
+                }
         </script>
     </head>
         <body background="pictures\background.jpg" >
@@ -110,6 +117,9 @@
          <button type="button" onclick="changebutton(this)">click me</button>
         <br>
         <br>
+        <p id="demo" style="font-size: large; color: rgb(255, 0, 0);">Fetch a file to change this text.</p>
+        <button onclick="getText('helloworld.txt')"> click me</button>
+        
 
         <p style="font-size: large; color: rgb(255, 0, 0);"> Enter your username:</p>
         <input type="text" id="name" onblur="checkonblur()">
