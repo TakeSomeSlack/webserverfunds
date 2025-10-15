@@ -13,7 +13,7 @@
         if (!$conn) {
          die ("connection failed: {mysqli_connect_error()}");  
         }
-        $sql = "select * from hollow_knight;";
+        $sql = "select * from courses;";
         $result = mysqli_query($conn, $sql);
         ?>
     </head>
