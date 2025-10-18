@@ -21,12 +21,22 @@
             $hours = $_POST['hours'];
             $hypelevel = $_POST['hypelevel'];
 
-    // Insert into the database
+            // Insert into the database
             $sql = "INSERT INTO hollow_knight (who_did, fav_boss, worst_boss, hours_on, hype_level)
             VALUES ('$who','$favboss','$worstboss','$hours','$hypelevel')";
             mysqli_query($conn, $sql);
-}
 
+            $sql_select = "SELECT * FROM hollow_knight WHERE who_did = '$who'";
+            $result = mysqli_query($conn, $sql_select);
+
+            echo "<h2>Previous entries for $who:</h2>";
+            while ($row = mysqli_fetch_assoc($result)) {
+            echo "Favorite boss: {$row['fav_boss']}<br/>";
+             echo "Worst boss: {$row['worst_boss']}<br/>";
+                echo "Hours: {$row['hours_on']}<br/>";
+            echo "Hype level: {$row['hype_level']}<br/><br/>";
+                }
+           }
             mysqli_close($conn);
 ?>
 </head>
