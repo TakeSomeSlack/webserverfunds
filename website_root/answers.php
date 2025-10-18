@@ -12,18 +12,23 @@
             if (!$conn) {
               die("Connection failed: {mysqli_connect_error()}");
             }
-            $sql = "select course_name, num_students from courses where course_number='{$course_number}';";
-            $result = mysqli_query($conn, $sql);
+           
 
+           if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $who = $_POST['who'];
             $favboss = $_POST['favboss'];
             $worstboss = $_POST['worstboss'];
             $hours = $_POST['hours'];
             $hypelevel = $_POST['hypelevel'];
 
-            $sql = "INSERT INTO experiences (who_did, fav_boss, worst_boss, hours_on, hype_level)
-            VALUES ('$who', '$favboss', '$worstboss', '$hours', '$hypelevel')";
-        ?>
+    // Insert into the database
+            $sql = "INSERT INTO hollow_knight (who_did, fav_boss, worst_boss, hours_on, hype_level)
+            VALUES ('$who','$favboss','$worstboss','$hours','$hypelevel')";
+            mysqli_query($conn, $sql);
+}
+
+            mysqli_close($conn);
+?>
 </head>
 <html>
     <body>

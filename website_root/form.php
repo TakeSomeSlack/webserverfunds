@@ -13,8 +13,18 @@
         if (!$conn) {
          die ("connection failed: {mysqli_connect_error()}");  
         }
-        $sql = "select * from courses;";
-        $result = mysqli_query($conn, $sql);
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $who = $_POST ['who'];
+            $favboss = $_POST ['favboss'];
+            $worstboss = $_POST ['worstboss'];
+            $hours = $_POST ['hours'];
+            $hypelevel = $_POST ['hypelevel'];
+            $sql = "INSERT INTO hollow_knight (who_did, fav_boss, worst_boss, hours_on, hype_level)
+            VALUES ('$who','$favboss','$worstboss', '$hours', '$hypelevel')";
+            
+            mysqli_query($conn, $sql);
+            }
         ?>
     </head>
     <body background="pictures/forms-background.jpg">
@@ -41,14 +51,5 @@
             </select>
             <input type="submit" value="submit"/>
         </form>
-        <?php
-            $who = $_POST ['who'];
-            $favboss = $_POST ['favboss'];
-            $worstboss = $_POST ['worstboss'];
-            $hours = $_POST ['hours'];
-            $hypelevel = $_POST ['hypelevel'];
-            $sql = "INSERT INTO hollow_knight (who_did, fav_boss worst_boss, hours_on, hype_level)
-            VALUES ('$who','$favboss','$worstboss', '$hours', '$hypelevel')";
-            ?>
     </body>
 </html>
