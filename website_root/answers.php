@@ -2,7 +2,6 @@
 <head>
     <?php
             // Retrieve submitted information
-            $who = htmlspecialchars($_POST["hollow_knight"]); 
             $server = "localhost";
             $username = "sikanderphp";
             $password = "Sikander77";
@@ -15,14 +14,24 @@
             }
             $sql = "select course_name, num_students from courses where course_number='{$course_number}';";
             $result = mysqli_query($conn, $sql);
+
+            $who = $_POST['who'];
+            $favboss = $_POST['favboss'];
+            $worstboss = $_POST['worstboss'];
+            $hours = $_POST['hours'];
+            $hypelevel = $_POST['hypelevel'];
+
+            $sql = "INSERT INTO experiences (who_did, fav_boss, worst_boss, hours_on, hype_level)
+            VALUES ('$who', '$favboss', '$worstboss', '$hours', '$hypelevel')";
         ?>
 </head>
 <html>
     <body>
-        <p>who got you on the game: <?= htmlspecialchars($_POST['who'])?> </p>
-        <p>Favorite boss: <?= htmlspecialchars($_POST['favboss'])?> </p>
-        <p>worst boss: <?= htmlspecialchars($_POST['worstboss'])?> </p>
-        <p>Hours on the game: <?= htmlspecialchars($_POST['hours'])?> </p>
-        <p>How hyped you are: <?= htmlspecialchars($_POST['hypelevel'])?> </p>
+        <h2>Your Hollow Knight Experience:</h2>
+        <p>Who got you on the game: <?= $who ?></p>
+        <p>Favorite boss: <?= $favboss ?></p>
+        <p>Worst boss: <?= $worstboss ?></p>
+        <p>Hours on the game: <?= $hours ?></p>
+        <p>Hype level for Silksong: <?= $hypelevel ?></p>
     </body>
 </html>

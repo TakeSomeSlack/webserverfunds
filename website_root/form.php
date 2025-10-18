@@ -31,16 +31,6 @@
             <br/>
             <p><label for="hours">Hours on the game:</label> <input type="text" id="hours" name="hours"/></p>
             <br/>
-
-            <?php
-            $who = $_POST ['who'];
-            $favboss = $_POST ['favboss'];
-            $worstboss = $_POST ['worstboss'];
-            $hours = $_POST ['hours'];
-            $sql = "INSERT INTO hollow_knight (who_did, fav_boss worst_boss, hours_on)
-            VALUES ('$who','$favboss','$worstboss', '$hours')";
-            ?>
-            
            <p><label for="hypelevel">Hype level for Silksong:</label></p> 
             <select id="hypelevel" name="hypelevel">
             <option value="not hyped">not hyped</option>
@@ -51,5 +41,14 @@
             </select>
             <input type="submit" value="submit"/>
         </form>
+        <?php
+            $who = $_POST ['who'];
+            $favboss = $_POST ['favboss'];
+            $worstboss = $_POST ['worstboss'];
+            $hours = $_POST ['hours'];
+            $hypelevel = $_POST ['hypelevel'];
+            $sql = "INSERT INTO hollow_knight (who_did, fav_boss worst_boss, hours_on, hype_level)
+            VALUES ('$who','$favboss','$worstboss', '$hours', '$hypelevel')";
+            ?>
     </body>
 </html>
