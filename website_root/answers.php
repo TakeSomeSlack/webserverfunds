@@ -43,12 +43,12 @@
 
     if ($ledState == "on") {
         // Export pin and set direction/output if not already done
-        exec("gpio -g mode 17 out");  
-        exec("gpio -g write 17 1");   // Turn LED ON
+        exec("gpio -g mode 0 out");  
+        exec("gpio -g write 0 1");   // Turn LED ON
         echo "LED is now ON";
     } elseif ($ledState == "off") {
-        exec("gpio -g mode 17 out");
-        exec("gpio -g write 17 0");   // Turn LED OFF
+        exec("gpio -g mode 0 out");
+        exec("gpio -g write 0 0");   // Turn LED OFF
         echo "LED is now OFF";
     } else {
         echo "Invalid LED state.";
