@@ -22,6 +22,8 @@
         <p style="font-size: large; text-align: center; color: rgb(255, 0, 0);"> I want to know peoples experience on the game to know what i should expect</p>
         <img src="pictures\hornet.jpg" style=" float: right; width: 750px;  height: 600px;">
         <form style="font-size: large; text-align: left; color: rgb(255, 0, 0);" action="answers.php" method="post">
+
+            <button type="button" name="LED" value="toggle">toggle led</button>
             <br/>
             <p><label for="who"> who got you on the game:</label> <input type="text" id="who" name="who"/></p>
             <br/>
@@ -40,7 +42,7 @@
             <option value="very hyped">very hyped</option>
             </select>
             <input type="submit" value="submit"/>
-            <button type="submit" name="LED" value="toggle"> toggle led </button>
+          
         </form>
         <?php
             $who = $_POST ['who'];
