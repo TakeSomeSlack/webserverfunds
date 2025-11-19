@@ -50,6 +50,7 @@
             <option value="very hyped">very hyped</option>
             </select>
             <input type="submit" value="submit"/>
+            <button type="submit" name="LED" value="toggle"> toggle led </button>
         </form>
     </body>
 </html>

@@ -38,6 +38,9 @@
                 }
            }
             mysqli_close($conn);
+            $LED = 0;
+            $output = shell_exec(gpio toggle $LED);
+           echo $output;
 ?>
 </head>
 <html>
