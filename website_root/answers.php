@@ -39,21 +39,21 @@
            }
             mysqli_close($conn);
            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $ledState = $_POST['led'];
+            $ledState = $_POST['led'];
 
-    if ($ledState == "on") {
-        // Export pin and set direction/output if not already done
-        exec("gpio -g mode 0 out");  
-        exec("gpio -g write 0 1");   // Turn LED ON
-        echo "LED is now ON";
-    } elseif ($ledState == "off") {
-        exec("gpio -g mode 0 out");
-        exec("gpio -g write 0 0");   // Turn LED OFF
-        echo "LED is now OFF";
-    } else {
-        echo "Invalid LED state.";
-    }
-}
+            if ($ledState == "on") {
+                // Export pin and set direction/output if not already done
+                shell_exec("gpio mode 0 out");  
+                shell_exec("gpio write 0 1");   // Turn LED ON
+                echo "LED is now ON";
+            } elseif ($ledState == "off") {
+                shell_exec("gpio mode 0 out");
+                shell_exec("gpio write 0 0");   // Turn LED OFF
+                echo "LED is now OFF";
+            } else {
+                echo "Invalid LED state.";
+            }
+        }
 ?>
 </head>
 <html>
