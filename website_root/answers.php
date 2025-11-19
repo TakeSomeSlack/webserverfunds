@@ -38,9 +38,22 @@
                 }
            }
             mysqli_close($conn);
-            $LED = 0;
-            $output = shell_exec(gpio toggle $LED);
-            echo $output;
+           if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $ledState = $_POST['led'];
+
+    if ($ledState == "on") {
+        // Export pin and set direction/output if not already done
+        exec("gpio -g mode 17 out");  
+        exec("gpio -g write 17 1");   // Turn LED ON
+        echo "LED is now ON";
+    } elseif ($ledState == "off") {
+        exec("gpio -g mode 17 out");
+        exec("gpio -g write 17 0");   // Turn LED OFF
+        echo "LED is now OFF";
+    } else {
+        echo "Invalid LED state.";
+    }
+}
 ?>
 </head>
 <html>

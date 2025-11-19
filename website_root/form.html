@@ -23,7 +23,8 @@
         <img src="pictures\hornet.jpg" style=" float: right; width: 750px;  height: 600px;">
         <form style="font-size: large; text-align: left; color: rgb(255, 0, 0);" action="answers.php" method="post">
 
-            <input type="submit" name="LED" value="toggle">toggle led</input>
+            <input type="radio" name="led" value="on"> Turn LED ON<br>
+            <input type="radio" name="led" value="off"> Turn LED OFF<br><br>
             <br/>
             <p><label for="who"> who got you on the game:</label> <input type="text" id="who" name="who"/></p>
             <br/>
@@ -45,7 +46,6 @@
           
         </form>
         <?php
-            $LED = $_POST ['LED'];
             $who = $_POST ['who'];
             $favboss = $_POST ['favboss'];
             $worstboss = $_POST ['worstboss'];
