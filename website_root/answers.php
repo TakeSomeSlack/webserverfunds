@@ -46,6 +46,12 @@
                 shell_exec("gpio mode 0 out");  
                 shell_exec("gpio write 0 1");   // Turn LED ON
                 echo "LED is now ON";
+                $raw = `./bme280`;
+            echo $raw;
+            $deserialized = json_decode($raw, true);
+         var_dump($deserialized);
+            echo $deserialized["temperature"];
+
             } elseif ($ledState == "off") {
                 shell_exec("gpio mode 0 out");
                 shell_exec("gpio write 0 0");   // Turn LED OFF
