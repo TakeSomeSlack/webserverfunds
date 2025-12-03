@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live News</title>
+</head>
+<body>
+ 
+<h2>News</h2>
+<div id="n">Loading...</div>
+ 
+<script>
+function getNews() {
+    fetch("https://api.worldnewsapi.com/search-news?api-key=5e1915419d73421f9ab3758c8478f8cc&source-country=us&date=2025-12-03")
+        .then(r => r.json())
+        .then(d => {
+            let t = "";
+            d.news.forEach(x => t += x.title + "<br>");
+            document.getElementById("n").innerHTML = t;
+        });
+}
+ 
+getNews();
+setInterval(getNews, 1000);
+</script>
+ 
+</body>
+</html>
