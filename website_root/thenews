@@ -6,16 +6,21 @@
 <body>
  
 <h2>News</h2>
+<div id="time"></div>
 <div id="n">Loading...</div>
  
 <script>
 function getNews() {
-    fetch("https://api.worldnewsapi.com/search-news?api-key=5e1915419d73421f9ab3758c8478f8cc&source-country=us&date=2025-12-03")
+    fetch("https://api.worldnewsapi.com/search-news?api-key=f69e6c0608c64f35a387e337c7f6689e&source-country=us&date=2025-12-03")
         .then(r => r.json())
         .then(d => {
             let t = "";
             d.news.forEach(x => t += x.title + "<br>");
             document.getElementById("n").innerHTML = t;
+
+
+            let now = new Date();
+            document.getElementById("time").innerHTML = "time update" + now.toLocaleString();
         });
 }
  
