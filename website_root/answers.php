@@ -38,6 +38,12 @@
                 }
            }
             mysqli_close($conn);
+
+
+
+
+
+            
            if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $ledState = $_POST['led'];
 
