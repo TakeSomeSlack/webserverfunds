@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
     <?php
+            header("https://www.google.com");
             // Retrieve submitted information
             $server = "localhost";
             $username = "sikanderphp";
@@ -16,16 +17,16 @@
 
            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $search = $_POST['search'];
-            $ip = $_SERVER["REMOTE_ADDR"];
+           // $ip = $_SERVER["REMOTE_ADDR"];
 
             // Insert into the database
-            $sql = "INSERT INTO wsfinal (typed, ipadress)
-            VALUES ('$search','$ip')";
+            $sql = "INSERT INTO wsfinal (typed)
+            VALUES ('$search')";
             mysqli_query($conn, $sql);
 
            }
             mysqli_close($conn);
-            header("https://www.google.com");
+            
 ?>
 </head>
 <html>
