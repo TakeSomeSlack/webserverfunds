@@ -31,5 +31,6 @@
 </head>
 <html>
     <body>
+        <p>what: <?= $search ?></p>
     </body>
 </html>
