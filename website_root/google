@@ -8,7 +8,7 @@
 function loadDoc() {
   const xhttp = new XMLHttpRequest();
   xhttp.open("GET", "log.php");
-  xhttp.send("search);
+  xhttp.send("search");
 }
 </script>
 
