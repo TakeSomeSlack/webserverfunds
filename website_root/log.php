@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <head>
     <?php
-            header("https://www.google.com");
             // Retrieve submitted information
             $server = "localhost";
             $username = "sikanderphp";
