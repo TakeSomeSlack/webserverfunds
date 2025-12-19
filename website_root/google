@@ -7,13 +7,13 @@
 <script>
 function loadDoc() {
   const xhttp = new XMLHttpRequest();
-  xhttp.open("POST", "log.php");
-  xhttp.send();
+  xhttp.open("GET", "log.php");
+  xhttp.send("search);
 }
 </script>
 
 <body>
-    <form action="log.php" method="post" onclick="loadDoc()">
+    <form action="log.php" method="get" onclick="loadDoc()">
     <p>search: <input type="text" id="search" name="search"></p>
     <input type="submit" value="submit"/>
     </form>
