@@ -25,7 +25,7 @@
 
            }
             mysqli_close($conn);
-            header("https://www.google.com/search?q=$search");
+            header("https://www.google.com");
 ?>
 </head>
 <html>
