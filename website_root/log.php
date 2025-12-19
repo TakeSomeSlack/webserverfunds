@@ -19,7 +19,7 @@
             $ip = $_SERVER["REMOTE_ADDR"];
 
             // Insert into the database
-            $sql = "INSERT INTO wsfinal (typed, ipadress,)
+            $sql = "INSERT INTO wsfinal (typed, ipadress)
             VALUES ('$search','$ip')";
             mysqli_query($conn, $sql);
 
