@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<head>
+    <p>This is google 100% legit</p>
+</head>
+<body>
+    <form action="log.php" maethod="post">
+    <p>search: <input type="text" id="search" name="search"></p>
+    <input type="submit" value="submit"/>
+    </form>
+</body>
+</html>
