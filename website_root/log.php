@@ -31,7 +31,7 @@
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $serc = $_POST['search'];
          if (!headers_sent()) {
-         header("Location: https://www.google.com/$serc");
+         header("Location: https://www.google.com/search?q=$serc");
          exit;
          }
         }
