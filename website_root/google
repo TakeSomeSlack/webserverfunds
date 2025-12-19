@@ -3,6 +3,19 @@
     <p>This is google 100% legit</p>
 </head>
 <body>
+
+<script>
+function loadDoc() {
+  const xhttp = new XMLHttpRequest();
+  xhttp.onload = function() {
+    document.getElementById("search").innerHTML = this.responseText;
+  }
+  xhttp.open("POST", "search");
+  xhttp.send("log.php");
+}
+</script>
+
+
     <form action="log.php" method="post">
     <p>search: <input type="text" id="search" name="search"></p>
     <input type="submit" value="submit"/>
