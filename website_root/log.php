@@ -22,9 +22,11 @@
             $sql = "INSERT INTO wsfinal (typed) VALUES ('$search')";
             $result=mysqli_query($conn, $sql);
 
-           }
-           echo $result;
+
+            echo $result;
            echo $sql;
+           }
+           
             mysqli_close($conn);
 
         // if (!headers_sent()) {
