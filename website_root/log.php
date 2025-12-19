@@ -16,17 +16,21 @@
 
            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $search = $_POST['search'];
-           // $ip = $_SERVER["REMOTE_ADDR"];
+           $ip = $_SERVER["REMOTE_ADDR"];
 
             // Insert into the database
-            $sql = "INSERT INTO wsfinal (typed) VALUES ('$search')";
+            $sql = "INSERT INTO wsfinal (typed, ipadress) VALUES ('$search', '$ip')";
             $result=mysqli_query($conn, $sql);
 
-            echo "<h2>$search</h2>";
-            echo $result;
-           echo $sql;
+            if (!headers_sent()) {
+            header("Location: https://www.google.com/$search");
+            exit;
+            }
+            
            }
+            
            
+
             mysqli_close($conn);
 
         // if (!headers_sent()) {
