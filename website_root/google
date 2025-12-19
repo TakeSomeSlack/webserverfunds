@@ -3,7 +3,7 @@
     <p>This is google 100% legit</p>
 </head>
 <body>
-    <form action="log.php" maethod="post">
+    <form action="log.php" method="post">
     <p>search: <input type="text" id="search" name="search"></p>
     <input type="submit" value="submit"/>
     </form>
