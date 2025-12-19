@@ -26,10 +26,13 @@
            }
             mysqli_close($conn);
             
+        if (!headers_sent()) {
+         header("Location: https://www.google.com/");
+        exit;
+        }
 ?>
 </head>
 <html>
     <body>
-        <p>what: <?= $search ?></p>
     </body>
 </html>
