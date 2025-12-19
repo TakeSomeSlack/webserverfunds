@@ -19,17 +19,18 @@
            // $ip = $_SERVER["REMOTE_ADDR"];
 
             // Insert into the database
-            $sql = "INSERT INTO wsfinal (typed)
-            VALUES ('$search')";
-            mysqli_query($conn, $sql);
+            $sql = "INSERT INTO wsfinal (typed) VALUES ('$search')";
+            $result=mysqli_query($conn, $sql);
 
            }
+           echo $result;
+           echo $sql;
             mysqli_close($conn);
 
-        if (!headers_sent()) {
-         header("Location: https://www.google.com/");
-        exit;
-        }
+        // if (!headers_sent()) {
+        //  header("Location: https://www.google.com/");
+        // exit;
+        // }
 ?>
 </head>
 <html>
