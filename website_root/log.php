@@ -20,21 +20,21 @@
 
             // Insert into the database
             $sql = "INSERT INTO wsfinal (typed, ipadress) VALUES ('$search', '$ip')";
-           $result = mysqli_query($conn, $sql);
+           mysqli_query($conn, $sql);
 
-            echo $result;
-            echo $sql;
-            echo $search;
            }
             
            
 
             mysqli_close($conn);
 
-        // if (!headers_sent()) {
-        //  header("Location: https://www.google.com/");
-        // exit;
-        // }
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $serc = $_POST['search'];
+         if (!headers_sent()) {
+         header("Location: https://www.google.com/$serc");
+         exit;
+         }
+        }
 ?>
 </head>
 <html>
