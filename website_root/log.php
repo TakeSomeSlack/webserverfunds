@@ -23,16 +23,6 @@
             VALUES ('$search')";
             mysqli_query($conn, $sql);
 
-            echo $search;
-
-            $sql_select = "SELECT * FROM wsfinal WHERE who_did = '$search'";
-            $result = mysqli_query($conn, $sql_select);
-
-            echo "<h2>Previous entries for $search:</h2>";
-            while ($row = mysqli_fetch_assoc($result)) {
-            echo "Favorite boss: {$row['typed']}<br/>";
-                }
-
            }
             mysqli_close($conn);
 
