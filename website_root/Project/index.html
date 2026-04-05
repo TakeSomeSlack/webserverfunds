@@ -83,13 +83,12 @@
 </div>
 
 <script>
-const SERVER_IP = "http://192.168.2.173:8080"; //  Pi 5 IP
-
 async function sendCommand(cmd) {
-    document.getElementById("output").innerText = "Sending...";
+    const output = document.getElementById("output");
+    output.innerText = "Sending...";
 
     try {
-        const res = await fetch(SERVER_IP + "/send", {
+        const res = await fetch("/send", {   // ✅ IMPORTANT: NO IP HERE
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -99,13 +98,13 @@ async function sendCommand(cmd) {
 
         const data = await res.json();
 
-        document.getElementById("output").innerText =
+        output.innerText =
             "Command: " + data.command + "\n\nResponse:\n" +
             data.response.join("\n");
 
     } catch (err) {
-        document.getElementById("output").innerText =
-            "ERROR: " + err;
+        output.innerText = "ERROR: " + err;
+        console.error(err);
     }
 }
 
