@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Bird Feeder Control Panel</title>
- 
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,11 +11,11 @@
             text-align: center;
             padding: 40px;
         }
- 
+
         h1 {
             margin-bottom: 30px;
         }
- 
+
         .card {
             background: #1e293b;
             padding: 30px;
@@ -23,7 +23,7 @@
             display: inline-block;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
- 
+
         button {
             padding: 15px 25px;
             margin: 10px;
@@ -35,11 +35,11 @@
             color: white;
             transition: 0.2s;
         }
- 
+
         button:hover {
             background: #2563eb;
         }
- 
+
         #output {
             margin-top: 20px;
             padding: 15px;
@@ -47,8 +47,9 @@
             border-radius: 10px;
             min-height: 50px;
             font-family: monospace;
+            white-space: pre-wrap;
         }
- 
+
         input {
             padding: 10px;
             border-radius: 8px;
@@ -58,61 +59,61 @@
         }
     </style>
 </head>
- 
+
 <body>
- 
-    <h1> Bird System Control</h1>
- 
-    <div class="card">
- 
-        <h3>Quick Commands</h3>
- 
-        <button onclick="sendCommand('G')">Get Status</button>
-        <button onclick="sendCommand('F')">Feed</button>
-        <button onclick="sendCommand('R')">Reset</button>
- 
-        <h3>Custom Command</h3>
- 
-        <input type="text" id="cmdInput" placeholder="Enter command">
-        <br>
-        <button onclick="sendCustom()">Send</button>
- 
-        <div id="output">Response will appear here...</div>
- 
-    </div>
- 
-    <script>
-        const SERVER_IP = "http://10.230.152.104:8080"; // CHANGE THIS
- 
-        async function sendCommand(cmd) {
-            document.getElementById("output").innerText = "Sending...";
- 
-            try {
-                const res = await fetch(SERVER_IP + "/send", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ command: cmd })
-                });
- 
-                const data = await res.json();
- 
-                document.getElementById("output").innerText =
-                    "Command: " + data.command + "\n\nResponse:\n" +
-                    data.response.join("\n");
- 
-            } catch (err) {
-                document.getElementById("output").innerText =
-                    "ERROR: " + err;
-            }
-        }
- 
-        function sendCustom() {
-            const cmd = document.getElementById("cmdInput").value;
-            sendCommand(cmd);
-        }
-    </script>
- 
+
+<h1> Bird System Control</h1>
+
+<div class="card">
+
+    <h3>Quick Commands</h3>
+
+    <button onclick="sendCommand('G')">Get Status</button>
+    <button onclick="sendCommand('F')">Feed</button>
+    <button onclick="sendCommand('R')">Reset</button>
+
+    <h3>Custom Command</h3>
+
+    <input type="text" id="cmdInput" placeholder="Enter command">
+    <br>
+    <button onclick="sendCustom()">Send</button>
+
+    <div id="output">Response will appear here...</div>
+
+</div>
+
+<script>
+const SERVER_IP = "http://192.168.2.173:8080"; //  Pi 5 IP
+
+async function sendCommand(cmd) {
+    document.getElementById("output").innerText = "Sending...";
+
+    try {
+        const res = await fetch(SERVER_IP + "/send", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ command: cmd })
+        });
+
+        const data = await res.json();
+
+        document.getElementById("output").innerText =
+            "Command: " + data.command + "\n\nResponse:\n" +
+            data.response.join("\n");
+
+    } catch (err) {
+        document.getElementById("output").innerText =
+            "ERROR: " + err;
+    }
+}
+
+function sendCustom() {
+    const cmd = document.getElementById("cmdInput").value;
+    sendCommand(cmd);
+}
+</script>
+
 </body>
 </html>
