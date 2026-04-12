@@ -73,7 +73,7 @@
     <!-- BUTTONS -->
     <div class="card">
         <button class="feed" onclick="sendCommand('F')">Feed</button>
-        <button class="refresh" onclick="loadData()">Refresh</button>
+        <button class="refresh" onclick="manualRefresh()">Refresh</button>
         <a href="gallery.php">
             <button class="gallery">Gallery</button>
         </a>
@@ -83,14 +83,17 @@
 
 <script>
 
-async function loadData() {
+let lastVideo = "";
+
+// ==========================
+// LOAD DATA (NO VIDEO RESET)
+// ==========================
+async function loadData(updateVideo = false) {
     try {
         let res = await fetch("get_data.php");
         let data = await res.json();
 
-        // ==========================
-        // WARNING DISPLAY
-        // ==========================
+        // WARNING
         let warningBox = document.getElementById("warningBox");
 
         if (data.warning !== "") {
@@ -100,9 +103,7 @@ async function loadData() {
             warningBox.style.display = "none";
         }
 
-        // ==========================
-        // STATUS DISPLAY
-        // ==========================
+        // STATUS
         document.getElementById("data").innerHTML = `
             <b>Bird:</b> ${data.bird} <br>
             <b>Tray:</b> ${data.tray} <br>
@@ -111,24 +112,27 @@ async function loadData() {
             <b>Time:</b> ${data.time}
         `;
 
-        // ==========================
-        // VIDEO DISPLAY
-        // ==========================
-        let videoBox = document.getElementById("videoBox");
+        // VIDEO (ONLY UPDATE IF CHANGED)
+        if (data.filename && (updateVideo || data.filename !== lastVideo)) {
+            lastVideo = data.filename;
 
-        if (data.filename) {
-            videoBox.innerHTML = `
+            document.getElementById("videoBox").innerHTML = `
                 <video width="100%" controls>
                     <source src="/uploads/${data.filename}">
                 </video>
             `;
-        } else {
-            videoBox.innerHTML = "No video";
         }
 
     } catch {
         document.getElementById("data").innerHTML = "Error loading data";
     }
+}
+
+// ==========================
+// MANUAL REFRESH (FOR BUTTON)
+// ==========================
+function manualRefresh() {
+    loadData(true); // forces video refresh
 }
 
 // ==========================
@@ -144,9 +148,13 @@ function sendCommand(cmd) {
     });
 }
 
-// AUTO REFRESH
-setInterval(loadData, 3000);
-loadData();
+// ==========================
+// AUTO REFRESH (NO VIDEO)
+// ==========================
+setInterval(() => loadData(false), 3000);
+
+// INITIAL LOAD
+loadData(true);
 
 </script>
 
