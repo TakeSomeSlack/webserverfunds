@@ -71,49 +71,51 @@
 
 let lastVideo = "";
 
-// -------------------------
+// ==========================
 // LOAD DATA
-// -------------------------
+// ==========================
 async function loadData(updateVideo=false) {
-    let res = await fetch("get_data.php");
-    let data = await res.json();
+    try {
+        let res = await fetch("get_data.php");
+        let data = await res.json();
 
-    // WARNING
-    let warningBox = document.getElementById("warningBox");
-    if (data.warning !== "") {
-        warningBox.style.display = "block";
-        warningBox.innerText = data.warning;
-    } else {
-        warningBox.style.display = "none";
-    }
+        let warningBox = document.getElementById("warningBox");
 
-    // STATUS
-    document.getElementById("data").innerHTML = `
-        Bird: ${data.bird} <br>
-        Tray: ${data.tray} <br>
-        Bin: ${data.bin} <br>
-        Battery: ${data.battery}% <br>
-        Time: ${data.time}
-    `;
+        if (data.warning !== "") {
+            warningBox.style.display = "block";
+            warningBox.innerText = data.warning;
+        } else {
+            warningBox.style.display = "none";
+        }
 
-    // VIDEO (no reset)
-    if (data.filename && (updateVideo || data.filename !== lastVideo)) {
-        lastVideo = data.filename;
-
-        document.getElementById("videoBox").innerHTML = `
-            <video width="100%" controls>
-                <source src="/uploads/${data.filename}">
-            </video>
+        document.getElementById("data").innerHTML = `
+            Bird: ${data.bird} <br>
+            Tray: ${data.tray} <br>
+            Bin: ${data.bin} <br>
+            Battery: ${data.battery}% <br>
+            Time: ${data.time}
         `;
+
+        if (data.filename && (updateVideo || data.filename !== lastVideo)) {
+            lastVideo = data.filename;
+
+            document.getElementById("videoBox").innerHTML = `
+                <video width="100%" controls>
+                    <source src="/uploads/${data.filename}">
+                </video>
+            `;
+        }
+
+    } catch {
+        document.getElementById("data").innerHTML = "Error loading data";
     }
 }
 
-// -------------------------
-// SEND COMMAND
-// -------------------------
+// ==========================
+// SEND COMMAND (FIXED)
+// ==========================
 function sendCommand(cmd) {
-
-    fetch("/webserverfunds/website_root/Project/send_command.php", {
+    fetch("send_command.php", {   // ← FIXED PATH
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -121,16 +123,17 @@ function sendCommand(cmd) {
         body: "cmd=" + cmd
     })
     .then(res => res.text())
-    .then(data => console.log(data));
+    .then(data => console.log("CMD:", data))
+    .catch(err => console.log("ERROR:", err));
 }
 
-// -------------------------
+// ==========================
 // REFRESH STATUS (IMPORTANT)
-// -------------------------
+// ==========================
 function refreshStatus() {
     sendCommand("G");
 
-    // give Arduino time to respond, then reload
+    // wait for Arduino response
     setTimeout(() => loadData(true), 1500);
 }
 
