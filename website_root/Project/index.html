@@ -1,119 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bird Feeder Control Panel</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-            padding: 40px;
-        }
-
-        h1 {
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 15px;
-            display: inline-block;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        button {
-            padding: 15px 25px;
-            margin: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background: #3b82f6;
-            color: white;
-            transition: 0.2s;
-        }
-
-        button:hover {
-            background: #2563eb;
-        }
-
-        #output {
-            margin-top: 20px;
-            padding: 15px;
-            background: black;
-            border-radius: 10px;
-            min-height: 50px;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
-
-        input {
-            padding: 10px;
-            border-radius: 8px;
-            border: none;
-            width: 200px;
-            margin-top: 10px;
-        }
-    </style>
+    <title>Bird Feeder</title>
 </head>
 
-<body>
+<body style="background-color: lightblue; text-align:center;">
 
-    <h1>🐦 Bird System Control</h1>
+<h1> Bird Feeder Dashboard</h1>
 
-    <div class="card">
+<div id="data" style="font-size: 20px;">
+    Loading...
+</div>
 
-        <h3>Quick Commands</h3>
+<br>
 
-        <button onclick="sendCommand('G')">Get Status</button>
-        <button onclick="sendCommand('F')">Feed</button>
-        <button onclick="sendCommand('R')">Reset</button>
+<button onclick="sendCommand('F')">Feed</button>
+<button onclick="sendCommand('G')">Get Status</button>
+<button onclick="sendCommand('W')">Wake</button>
 
-        <h3>Custom Command</h3>
+<script>
 
-        <input type="text" id="cmdInput" placeholder="Enter command">
-        <br>
-        <button onclick="sendCustom()">Send</button>
+async function loadData() {
+    try {
+        let res = await fetch("get_data.php");
+        let data = await res.json();
 
-        <div id="output">Response will appear here...</div>
-
-    </div>
-
-    <!-- ✅ SCRIPT MUST BE AT BOTTOM -->
-    <script>
-    async function sendCommand(cmd) {
-        const output = document.getElementById("output");
-        output.innerText = "Sending...";
-
-        try {
-            const res = await fetch("/send", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ command: cmd })
-            });
-
-            const data = await res.json();
-
-            output.innerText =
-                "Command: " + data.command + "\n\nResponse:\n" +
-                data.response.join("\n");
-
-        } catch (err) {
-            output.innerText = "ERROR: " + err;
-            console.error(err);
-        }
+        document.getElementById("data").innerHTML = `
+            Bird: ${data.bird} <br>
+            Tray: ${data.tray} <br>
+            Bin: ${data.bin} <br>
+            Battery: ${data.battery}% <br>
+            Time: ${data.time}
+        `;
+    } catch {
+        document.getElementById("data").innerHTML = "Error loading data";
     }
+}
 
-    function sendCustom() {
-        const cmd = document.getElementById("cmdInput").value;
-        sendCommand(cmd);
-    }
-    </script>
+function sendCommand(cmd) {
+    fetch("send_command.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "cmd=" + cmd
+    });
+}
+
+setInterval(loadData, 3000);
+loadData();
+
+</script>
 
 </body>
 </html>
