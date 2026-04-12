@@ -26,12 +26,16 @@ async function loadData() {
         let data = await res.json();
 
         document.getElementById("data").innerHTML = `
-            Bird: ${data.bird} <br>
-            Tray: ${data.tray} <br>
-            Bin: ${data.bin} <br>
-            Battery: ${data.battery}% <br>
-            Time: ${data.time}
-        `;
+    Bird: ${data.bird} <br>
+    Tray: ${data.tray} <br>
+    Bin: ${data.bin} <br>
+    Battery: ${data.battery}% <br>
+    Time: ${data.time} <br><br>
+
+    <video width="300" controls>
+        <source src="/uploads/${data.filename}" type="video/mp4">
+    </video>
+`;
     } catch {
         document.getElementById("data").innerHTML = "Error loading data";
     }

@@ -15,6 +15,7 @@ echo json_encode([
     "bin" => $row['bin_status'],
     "battery" => $row['battery'],
     "time" => $row['timestamp']
+    "filename" => $row['filename']
 ]);
 
 ?>
