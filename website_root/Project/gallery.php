@@ -2,11 +2,7 @@
 
 $conn = mysqli_connect("localhost", "Sikander", "Sikander77", "feeder");
 
-if (!$conn) {
-    die("DB error: " . mysqli_connect_error());
-}
-
-$result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename != '' ORDER BY id DESC");
+$result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename LIKE '%.mp4' ORDER BY id DESC");
 
 ?>
 
@@ -14,27 +10,15 @@ $result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename != '' OR
 <html>
 <head>
     <title>Video Gallery</title>
-
     <style>
-        body {
-            background-color: lightblue;
-            text-align: center;
-            font-family: Arial;
-        }
-
+        body { background-color: lightblue; text-align: center; }
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             padding: 20px;
         }
-
-        video {
-            width: 100%;
-            border: 3px solid black;
-            border-radius: 10px;
-        }
-
+        video { width: 100%; }
         .card {
             background: white;
             padding: 10px;
@@ -45,9 +29,8 @@ $result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename != '' OR
 
 <body>
 
-<h1> Bird Video Gallery</h1>
-
-<a href="index.html">⬅ Back to Dashboard</a>
+<h1>🎥 Bird Video Gallery</h1>
+<a href="index.html">⬅ Back</a>
 
 <div class="gallery">
 
@@ -55,12 +38,7 @@ $result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename != '' OR
 while ($row = mysqli_fetch_assoc($result)) {
 
     $file = $row['filename'];
-$time = $row['timestamp'];
-
-// Skip non-mp4 files
-if ($file == "" || substr($file, -4) != ".mp4") {
-    continue;
-}
+    $time = $row['timestamp'];
 
     echo "
     <div class='card'>

@@ -1,48 +1,42 @@
-<?php 
+<?php
 
-$server = "localhost";
-$username = "Sikander";
-$password = "Sikander77";
-$database = "feeder";
+$conn = mysqli_connect("localhost", "Sikander", "Sikander77", "feeder");
 
-$conn = mysqli_connect($server, $username, $password, $database);
+$target_dir = "/home/Sikander/uploads/";
 
-if (!$conn) {
-    die("connection failed: " . mysqli_connect_error());
-}
+if (isset($_FILES["video"])) {
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $filename = basename($_FILES["video"]["name"]);
+    $h264_path = $target_dir . $filename;
 
-    $data = $_POST['data'];
+    if (move_uploaded_file($_FILES["video"]["tmp_name"], $h264_path)) {
 
-    // Convert: B:1,T:OK,N:OK,BAT:85
-    $data = str_replace(",", "&", $data);
-    parse_str($data, $parsed);
+        echo "UPLOAD OK: " . $filename . "\n";
 
-    $bird = $parsed['B'];
-    $tray = $parsed['T'];
-    $bin = $parsed['N'];
-    $battery = $parsed['BAT'];
+        // Convert to MP4
+        $mp4_name = pathinfo($filename, PATHINFO_FILENAME) . ".mp4";
+        $mp4_path = $target_dir . $mp4_name;
 
-    $filename = "";
+        $cmd = "ffmpeg -i $h264_path -c:v libx264 -pix_fmt yuv420p $mp4_path 2>&1";
+        shell_exec($cmd);
 
-    //  UPDATED PATH HERE
-    if (isset($_FILES['video'])) {
-        $target_dir = "/home/Sikander/uploads/";
+        // Save to DB
+        mysqli_query($conn, "
+            INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
+            VALUES (1, 'OK', 'OK', 100, '$mp4_name')
+        ");
 
-        if (!file_exists($target_dir)) {
-            mkdir($target_dir, 0777, true);
-        }
+        // Optional: delete raw file
+        unlink($h264_path);
 
-        $filename = time() . "_" . basename($_FILES["video"]["name"]);
-        move_uploaded_file($_FILES["video"]["tmp_name"], $target_dir . $filename);
+        echo "CONVERTED TO: " . $mp4_name;
+
+    } else {
+        echo "UPLOAD FAILED";
     }
 
-    $sql = "INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
-            VALUES ('$bird', '$tray', '$bin', '$battery', '$filename')";
-
-    mysqli_query($conn, $sql);
-
-    echo "OK";
+} else {
+    echo "NO FILE RECEIVED";
 }
+
 ?>
