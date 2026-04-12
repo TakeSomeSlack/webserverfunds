@@ -1,7 +1,7 @@
 <?php 
 
 $server = "localhost";
-$username = "sikanderphp";
+$username = "Sikander";
 $password = "Sikander77";
 $database = "feeder";
 
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $filename = "";
 
-    // ✅ UPDATED PATH HERE
+    //  UPDATED PATH HERE
     if (isset($_FILES['video'])) {
         $target_dir = "/home/Sikander/uploads/";
 
