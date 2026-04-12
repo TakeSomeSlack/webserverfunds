@@ -1,6 +1,6 @@
 <?php
 
-$conn = mysqli_connect("localhost", "sikanderphp", "Sikander77", "feeder");
+$conn = mysqli_connect("localhost", "Sikander", "Sikander77", "feeder");
 
 if (!$conn) {
     die("DB error: " . mysqli_connect_error());
