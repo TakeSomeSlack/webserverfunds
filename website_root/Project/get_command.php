@@ -1,19 +1,14 @@
 <?php
 
-$file = "command.txt";
+$file = __DIR__ . "/command.txt";
 
 if (!file_exists($file)) {
     echo "NONE";
     exit;
 }
 
-$cmd = trim(file_get_contents($file));
+$cmd = file_get_contents($file);
+file_put_contents($file, "NONE");
 
-if ($cmd == "") {
-    echo "NONE";
-} else {
-    echo $cmd;
-    file_put_contents($file, "");
-}
-
+echo trim($cmd);
 ?>
