@@ -72,7 +72,7 @@
 let lastVideo = "";
 
 // ==========================
-// LOAD DATA
+// LOAD DATA (ONLY WHEN CALLED)
 // ==========================
 async function loadData(updateVideo=false) {
     try {
@@ -112,10 +112,10 @@ async function loadData(updateVideo=false) {
 }
 
 // ==========================
-// SEND COMMAND (FIXED)
+// SEND COMMAND
 // ==========================
 function sendCommand(cmd) {
-    fetch("send_command.php", {   // ← FIXED PATH
+    fetch("send_command.php", {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -128,17 +128,21 @@ function sendCommand(cmd) {
 }
 
 // ==========================
-// REFRESH STATUS (IMPORTANT)
+// REFRESH STATUS (MAIN FIX)
 // ==========================
 function refreshStatus() {
+
+    // Step 1: request Arduino status
     sendCommand("G");
 
-    // wait for Arduino response
-    setTimeout(() => loadData(true), 1500);
+    // Step 2: wait for response to travel:
+    // Pi5 → Pi Zero → Arduino → Pi Zero → Pi5 → DB
+    setTimeout(() => {
+        loadData(true);
+    }, 2000); // slightly longer delay for reliability
 }
 
-// AUTO UPDATE (NO VIDEO RESET)
-setInterval(() => loadData(false), 3000);
+// INITIAL LOAD ONLY
 loadData(true);
 
 </script>
