@@ -1,6 +1,11 @@
 <?php 
 
-$conn = mysqli_connect("localhost", "sikanderphp", "Sikander77", "feeder");
+$server = "localhost";
+$username = "sikanderphp";
+$password = "Sikander77";
+$database = "feeder";
+
+$conn = mysqli_connect($server, $username, $password, $database);
 
 if (!$conn) {
     die("connection failed: " . mysqli_connect_error());
@@ -21,8 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $filename = "";
 
+    // ✅ UPDATED PATH HERE
     if (isset($_FILES['video'])) {
-        $target_dir = "/home/pi/uploads/";
+        $target_dir = "/home/Sikander/uploads/";
 
         if (!file_exists($target_dir)) {
             mkdir($target_dir, 0777, true);
