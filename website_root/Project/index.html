@@ -1,27 +1,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bird Feeder</title>
+    <title>Bird Feeder Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f8;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .warning {
+            background: #ff4d4d;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .status {
+            font-size: 18px;
+            text-align: left;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .feed { background: #4CAF50; color: white; }
+        .refresh { background: #2196F3; color: white; }
+        .gallery { background: #555; color: white; }
+    </style>
 </head>
 
-<body style="background-color: lightblue; text-align:center;">
+<body>
 
-<h1> Bird Feeder Dashboard</h1>
+<div class="container">
 
-<div id="data" style="font-size: 20px;">
-    Loading...
+    <h1>Bird Feeder System</h1>
+
+    <!-- WARNING BOX -->
+    <div id="warningBox" class="warning"></div>
+
+    <!-- STATUS -->
+    <div class="card status" id="data">
+        Loading...
+    </div>
+
+    <!-- VIDEO -->
+    <div class="card" id="videoBox"></div>
+
+    <!-- BUTTONS -->
+    <div class="card">
+        <button class="feed" onclick="sendCommand('F')">Feed</button>
+        <button class="refresh" onclick="loadData()">Refresh</button>
+        <a href="gallery.php">
+            <button class="gallery">Gallery</button>
+        </a>
+    </div>
+
 </div>
-
-<br>
-
-<button onclick="sendCommand('F')">Feed</button>
-<button onclick="sendCommand('G')">Get Status</button>
-<button onclick="sendCommand('W')">Wake</button>
-
-<br><br>
-<a href="gallery.php">
-    <button>View Video Gallery</button>
-</a>
 
 <script>
 
@@ -30,24 +88,52 @@ async function loadData() {
         let res = await fetch("get_data.php");
         let data = await res.json();
 
-        document.getElementById("data").innerHTML = `
-    Bird: ${data.bird} <br>
-    Tray: ${data.tray} <br>
-    Bin: ${data.bin} <br>
-    Battery: ${data.battery}% <br>
-    Time: ${data.time} <br><br>
+        // ==========================
+        // WARNING DISPLAY
+        // ==========================
+        let warningBox = document.getElementById("warningBox");
 
-    ${data.filename ? `
-    <video width="300" controls>
-        <source src="/uploads/${data.filename}">
-    </video>
-    ` : "No video yet"}
-`;
+        if (data.warning !== "") {
+            warningBox.style.display = "block";
+            warningBox.innerText = data.warning;
+        } else {
+            warningBox.style.display = "none";
+        }
+
+        // ==========================
+        // STATUS DISPLAY
+        // ==========================
+        document.getElementById("data").innerHTML = `
+            <b>Bird:</b> ${data.bird} <br>
+            <b>Tray:</b> ${data.tray} <br>
+            <b>Bin:</b> ${data.bin} <br>
+            <b>Battery:</b> ${data.battery}% <br>
+            <b>Time:</b> ${data.time}
+        `;
+
+        // ==========================
+        // VIDEO DISPLAY
+        // ==========================
+        let videoBox = document.getElementById("videoBox");
+
+        if (data.filename) {
+            videoBox.innerHTML = `
+                <video width="100%" controls>
+                    <source src="/uploads/${data.filename}">
+                </video>
+            `;
+        } else {
+            videoBox.innerHTML = "No video";
+        }
+
     } catch {
         document.getElementById("data").innerHTML = "Error loading data";
     }
 }
 
+// ==========================
+// COMMAND FUNCTION
+// ==========================
 function sendCommand(cmd) {
     fetch("send_command.php", {
         method: "POST",
@@ -58,6 +144,7 @@ function sendCommand(cmd) {
     });
 }
 
+// AUTO REFRESH
 setInterval(loadData, 3000);
 loadData();
 

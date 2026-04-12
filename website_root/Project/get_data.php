@@ -7,7 +7,6 @@ if (!$conn) {
 }
 
 $result = mysqli_query($conn, "SELECT * FROM system_logs ORDER BY id DESC LIMIT 1");
-
 $row = mysqli_fetch_assoc($result);
 
 if (!$row) {
@@ -17,9 +16,26 @@ if (!$row) {
         "bin" => "N/A",
         "battery" => 0,
         "filename" => "",
-        "time" => "No data"
+        "time" => "No data",
+        "warning" => ""
     ]);
     exit;
+}
+
+// ==========================
+// WARNING LOGIC
+// ==========================
+$warning = "";
+
+if ($row['bin_status'] == "LOW") {
+    $warning = "Food Bin Low";
+}
+
+if ($row['battery'] < 30) {
+    if ($warning != "") {
+        $warning .= " | ";
+    }
+    $warning .= "Battery Low";
 }
 
 echo json_encode([
@@ -28,7 +44,8 @@ echo json_encode([
     "bin" => $row['bin_status'],
     "battery" => $row['battery'],
     "filename" => $row['filename'],
-    "time" => $row['timestamp']
+    "time" => $row['timestamp'],
+    "warning" => $warning
 ]);
 
 ?>
