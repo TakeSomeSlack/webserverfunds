@@ -45,7 +45,7 @@ $result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename != '' OR
 
 <body>
 
-<h1>🎥 Bird Video Gallery</h1>
+<h1> Bird Video Gallery</h1>
 
 <a href="index.html">⬅ Back to Dashboard</a>
 
@@ -55,7 +55,12 @@ $result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename != '' OR
 while ($row = mysqli_fetch_assoc($result)) {
 
     $file = $row['filename'];
-    $time = $row['timestamp'];
+$time = $row['timestamp'];
+
+// Skip non-mp4 files
+if ($file == "" || substr($file, -4) != ".mp4") {
+    continue;
+}
 
     echo "
     <div class='card'>
