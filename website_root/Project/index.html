@@ -1,58 +1,187 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bird Feeder</title>
+    <title>Bird Feeder Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .warning {
+            background: #ff3b3b;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            animation: pulse 1.2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {opacity: 1;}
+            50% {opacity: 0.7;}
+            100% {opacity: 1;}
+        }
+
+        .status {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .status span {
+            font-weight: bold;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .feed {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .refresh {
+            background: #2196F3;
+            color: white;
+        }
+
+        .gallery {
+            background: #444;
+            color: white;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .label {
+            color: #888;
+        }
+    </style>
 </head>
 
-<body style="text-align:center; font-family: Arial; background-color: lightblue;">
+<body>
 
-<h1>Bird Feeder System</h1>
+<div class="container">
 
-<div id="data">
-    Loading...
+    <h1>Bird Feeder System</h1>
+
+    <!-- WARNING -->
+    <div id="warningBox" class="warning"></div>
+
+    <!-- STATUS -->
+    <div class="card status" id="data">
+        Loading...
+    </div>
+
+    <!-- VIDEO -->
+    <div class="card" id="videoBox">
+        No video yet
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="card buttons">
+        <button class="feed" onclick="sendCommand('F')">Feed</button>
+        <button class="refresh" onclick="refreshStatus()">Refresh Status</button>
+        <a href="gallery.php">
+            <button class="gallery">Gallery</button>
+        </a>
+    </div>
+
 </div>
-
-<br>
-
-<button onclick="sendCommand('F')">Feed</button>
-<button onclick="sendCommand('G')">Get Status</button>
-
-<br><br>
-
-<a href="gallery.php">
-    <button>View Gallery</button>
-</a>
 
 <script>
 
+let lastVideo = "";
+
 // ==========================
-// LOAD DATA FROM SERVER
+// LOAD DATA
 // ==========================
-async function loadData() {
+async function loadData(updateVideo=false) {
     try {
         let res = await fetch("get_data.php");
         let data = await res.json();
 
-        document.getElementById("data").innerHTML = `
-            Bird: ${data.bird} <br>
-            Tray: ${data.tray} <br>
-            Bin: ${data.bin} <br>
-            Battery: ${data.battery}% <br>
-            Time: ${data.time} <br><br>
+        // WARNING
+        let warningBox = document.getElementById("warningBox");
 
-            ${data.filename ? `
-            <video width="300" controls>
-                <source src="/uploads/${data.filename}">
-            </video>
-            ` : "No video yet"}
+        if (data.warning !== "") {
+            warningBox.style.display = "block";
+            warningBox.innerText = data.warning;
+        } else {
+            warningBox.style.display = "none";
+        }
+
+        // STATUS
+        document.getElementById("data").innerHTML = `
+            <div><span class="label">Bird:</span> ${data.bird}</div>
+            <div><span class="label">Tray:</span> ${data.tray}</div>
+            <div><span class="label">Bin:</span> ${data.bin}</div>
+            <div><span class="label">Battery:</span> ${data.battery}%</div>
+            <div><span class="label">Time:</span> ${data.time}</div>
         `;
+
+        // VIDEO (NO RESET)
+        if (data.filename && (updateVideo || data.filename !== lastVideo)) {
+            lastVideo = data.filename;
+
+            document.getElementById("videoBox").innerHTML = `
+                <video controls>
+                    <source src="/uploads/${data.filename}">
+                </video>
+            `;
+        }
+
     } catch {
         document.getElementById("data").innerHTML = "Error loading data";
     }
 }
 
 // ==========================
-// SEND COMMAND TO PI ZERO
+// SEND COMMAND
 // ==========================
 function sendCommand(cmd) {
     fetch("send_command.php", {
@@ -65,12 +194,18 @@ function sendCommand(cmd) {
 }
 
 // ==========================
-// AUTO REFRESH
+// REFRESH STATUS (REAL)
 // ==========================
-setInterval(loadData, 3000);
+function refreshStatus() {
+    sendCommand("G");
+
+    setTimeout(() => {
+        loadData(true);
+    }, 1500);
+}
 
 // INITIAL LOAD
-loadData();
+loadData(true);
 
 </script>
 
