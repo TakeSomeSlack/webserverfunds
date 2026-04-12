@@ -1,118 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Bird Feeder Dashboard</title>
-
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f6f8;
-            text-align: center;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: auto;
-            margin-top: 30px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .warning {
-            background: red;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            display: none;
-        }
-
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .feed { background: #4CAF50; color: white; }
-        .refresh { background: #2196F3; color: white; }
-    </style>
+    <title>Bird Feeder</title>
 </head>
 
-<body>
+<body style="text-align:center; font-family: Arial; background-color: lightblue;">
 
-<div class="container">
+<h1>Bird Feeder System</h1>
 
-    <h1>Bird Feeder System</h1>
-
-    <div id="warningBox" class="warning"></div>
-
-    <div class="card" id="data">Loading...</div>
-
-    <div class="card" id="videoBox"></div>
-
-    <div class="card">
-        <button class="feed" onclick="sendCommand('F')">Feed</button>
-        <button class="refresh" onclick="refreshStatus()">Refresh Status</button>
-        <a href="gallery.php"><button>Gallery</button></a>
-    </div>
-
+<div id="data">
+    Loading...
 </div>
+
+<br>
+
+<button onclick="sendCommand('F')">Feed</button>
+<button onclick="sendCommand('G')">Get Status</button>
+
+<br><br>
+
+<a href="gallery.php">
+    <button>View Gallery</button>
+</a>
 
 <script>
 
-let lastVideo = "";
-
 // ==========================
-// LOAD DATA (ONLY WHEN CALLED)
+// LOAD DATA FROM SERVER
 // ==========================
-async function loadData(updateVideo=false) {
+async function loadData() {
     try {
         let res = await fetch("get_data.php");
         let data = await res.json();
-
-        let warningBox = document.getElementById("warningBox");
-
-        if (data.warning !== "") {
-            warningBox.style.display = "block";
-            warningBox.innerText = data.warning;
-        } else {
-            warningBox.style.display = "none";
-        }
 
         document.getElementById("data").innerHTML = `
             Bird: ${data.bird} <br>
             Tray: ${data.tray} <br>
             Bin: ${data.bin} <br>
             Battery: ${data.battery}% <br>
-            Time: ${data.time}
+            Time: ${data.time} <br><br>
+
+            ${data.filename ? `
+            <video width="300" controls>
+                <source src="/uploads/${data.filename}">
+            </video>
+            ` : "No video yet"}
         `;
-
-        if (data.filename && (updateVideo || data.filename !== lastVideo)) {
-            lastVideo = data.filename;
-
-            document.getElementById("videoBox").innerHTML = `
-                <video width="100%" controls>
-                    <source src="/uploads/${data.filename}">
-                </video>
-            `;
-        }
-
     } catch {
         document.getElementById("data").innerHTML = "Error loading data";
     }
 }
 
 // ==========================
-// SEND COMMAND
+// SEND COMMAND TO PI ZERO
 // ==========================
 function sendCommand(cmd) {
     fetch("send_command.php", {
@@ -121,29 +61,16 @@ function sendCommand(cmd) {
             "Content-Type": "application/x-www-form-urlencoded"
         },
         body: "cmd=" + cmd
-    })
-    .then(res => res.text())
-    .then(data => console.log("CMD:", data))
-    .catch(err => console.log("ERROR:", err));
+    });
 }
 
 // ==========================
-// REFRESH STATUS (MAIN FIX)
+// AUTO REFRESH
 // ==========================
-function refreshStatus() {
+setInterval(loadData, 3000);
 
-    // Step 1: request Arduino status
-    sendCommand("G");
-
-    // Step 2: wait for response to travel:
-    // Pi5 → Pi Zero → Arduino → Pi Zero → Pi5 → DB
-    setTimeout(() => {
-        loadData(true);
-    }, 2000); // slightly longer delay for reliability
-}
-
-// INITIAL LOAD ONLY
-loadData(true);
+// INITIAL LOAD
+loadData();
 
 </script>
 
