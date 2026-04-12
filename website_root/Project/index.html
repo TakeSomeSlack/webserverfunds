@@ -32,9 +32,11 @@ async function loadData() {
     Battery: ${data.battery}% <br>
     Time: ${data.time} <br><br>
 
+    ${data.filename ? `
     <video width="300" controls>
-        <source src="/uploads/${data.filename}" type="video/mp4">
+        <source src="/uploads/${data.filename}">
     </video>
+    ` : "No video yet"}
 `;
     } catch {
         document.getElementById("data").innerHTML = "Error loading data";
