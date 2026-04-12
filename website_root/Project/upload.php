@@ -74,6 +74,32 @@ if (isset($_FILES["video"])) {
     exit;
 }
 
+// ==========================
+// HANDLE WARNINGS
+// ==========================
+if (isset($_POST["warning"])) {
+
+    $warning = $_POST["warning"];
+
+    if ($warning == "BIN_LOW") {
+        mysqli_query($conn, "
+            INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
+            VALUES (0, 'OK', 'LOW', 0, '')
+        ");
+        echo "BIN WARNING STORED";
+    }
+
+    if ($warning == "BAT_LOW") {
+        mysqli_query($conn, "
+            INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
+            VALUES (0, 'OK', 'OK', 5, '')
+        ");
+        echo "BAT WARNING STORED";
+    }
+
+    exit;
+}
+
 echo "NO DATA RECEIVED";
 
 ?>
