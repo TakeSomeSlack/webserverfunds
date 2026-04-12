@@ -20,7 +20,6 @@
         h1 {
             color: white;
             text-align: center;
-            margin-bottom: 20px;
         }
 
         .card {
@@ -32,73 +31,33 @@
         }
 
         .warning {
-            background: #ff3b3b;
+            background: red;
             color: white;
             padding: 15px;
             border-radius: 12px;
-            text-align: center;
-            font-weight: bold;
             display: none;
-            animation: pulse 1.2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {opacity: 1;}
-            50% {opacity: 0.7;}
-            100% {opacity: 1;}
-        }
-
-        .status {
-            font-size: 18px;
-            line-height: 1.6;
-        }
-
-        .status span {
             font-weight: bold;
         }
 
         .buttons {
             display: flex;
             justify-content: space-around;
-            flex-wrap: wrap;
         }
 
         button {
             padding: 12px 20px;
-            margin: 5px;
             border: none;
             border-radius: 10px;
             font-size: 16px;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        button:hover {
-            transform: scale(1.05);
-        }
-
-        .feed {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .refresh {
-            background: #2196F3;
-            color: white;
-        }
-
-        .gallery {
-            background: #444;
-            color: white;
-        }
+        .feed { background: #4CAF50; color: white; }
+        .refresh { background: #2196F3; color: white; }
 
         video {
             width: 100%;
             border-radius: 12px;
-        }
-
-        .label {
-            color: #888;
         }
     </style>
 </head>
@@ -109,26 +68,16 @@
 
     <h1>Bird Feeder System</h1>
 
-    <!-- WARNING -->
     <div id="warningBox" class="warning"></div>
 
-    <!-- STATUS -->
-    <div class="card status" id="data">
-        Loading...
-    </div>
+    <div class="card" id="data">Loading...</div>
 
-    <!-- VIDEO -->
-    <div class="card" id="videoBox">
-        No video yet
-    </div>
+    <div class="card" id="videoBox">No video</div>
 
-    <!-- BUTTONS -->
     <div class="card buttons">
         <button class="feed" onclick="sendCommand('F')">Feed</button>
         <button class="refresh" onclick="refreshStatus()">Refresh Status</button>
-        <a href="gallery.php">
-            <button class="gallery">Gallery</button>
-        </a>
+        <a href="gallery.php"><button>Gallery</button></a>
     </div>
 
 </div>
@@ -141,42 +90,34 @@ let lastVideo = "";
 // LOAD DATA
 // ==========================
 async function loadData(updateVideo=false) {
-    try {
-        let res = await fetch("get_data.php");
-        let data = await res.json();
+    let res = await fetch("get_data.php");
+    let data = await res.json();
 
-        // WARNING
-        let warningBox = document.getElementById("warningBox");
+    let warningBox = document.getElementById("warningBox");
 
-        if (data.warning !== "") {
-            warningBox.style.display = "block";
-            warningBox.innerText = data.warning;
-        } else {
-            warningBox.style.display = "none";
-        }
+    if (data.warning !== "") {
+        warningBox.style.display = "block";
+        warningBox.innerText = data.warning;
+    } else {
+        warningBox.style.display = "none";
+    }
 
-        // STATUS
-        document.getElementById("data").innerHTML = `
-            <div><span class="label">Bird:</span> ${data.bird}</div>
-            <div><span class="label">Tray:</span> ${data.tray}</div>
-            <div><span class="label">Bin:</span> ${data.bin}</div>
-            <div><span class="label">Battery:</span> ${data.battery}%</div>
-            <div><span class="label">Time:</span> ${data.time}</div>
+    document.getElementById("data").innerHTML = `
+        Bird: ${data.bird} <br>
+        Tray: ${data.tray} <br>
+        Bin: ${data.bin} <br>
+        Battery: ${data.battery}% <br>
+        Time: ${data.time}
+    `;
+
+    if (data.filename && (updateVideo || data.filename !== lastVideo)) {
+        lastVideo = data.filename;
+
+        document.getElementById("videoBox").innerHTML = `
+            <video controls>
+                <source src="/uploads/${data.filename}">
+            </video>
         `;
-
-        // VIDEO (NO RESET)
-        if (data.filename && (updateVideo || data.filename !== lastVideo)) {
-            lastVideo = data.filename;
-
-            document.getElementById("videoBox").innerHTML = `
-                <video controls>
-                    <source src="/uploads/${data.filename}">
-                </video>
-            `;
-        }
-
-    } catch {
-        document.getElementById("data").innerHTML = "Error loading data";
     }
 }
 
@@ -194,14 +135,25 @@ function sendCommand(cmd) {
 }
 
 // ==========================
-// REFRESH STATUS (REAL)
+// REFRESH (WAKE + GET STATUS)
 // ==========================
 function refreshStatus() {
-    sendCommand("G");
 
+    // Step 1: Wake system
+    sendCommand("W");
+
+    // Step 2: Wait for wake
     setTimeout(() => {
-        loadData(true);
-    }, 1500);
+
+        // Step 3: Request status
+        sendCommand("G");
+
+        // Step 4: Wait for response
+        setTimeout(() => {
+            loadData(true);
+        }, 1500);
+
+    }, 1000);
 }
 
 // INITIAL LOAD
