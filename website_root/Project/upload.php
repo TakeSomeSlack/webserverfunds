@@ -10,6 +10,20 @@ $target_dir = "/home/Sikander/uploads/";
 
 
 // ==========================
+// CLEANUP ORPHANED ENTRIES
+// ==========================
+function cleanupOrphans($conn, $target_dir) {
+    $result = mysqli_query($conn, "SELECT id, filename FROM system_logs WHERE filename != ''");
+    while ($row = mysqli_fetch_assoc($result)) {
+        $path = $target_dir . $row['filename'];
+        if (!file_exists($path)) {
+            mysqli_query($conn, "DELETE FROM system_logs WHERE id = " . $row['id']);
+        }
+    }
+}
+
+
+// ==========================
 // HANDLE STATUS DATA
 // ==========================
 if (isset($_POST["data"])) {
@@ -27,6 +41,9 @@ if (isset($_POST["data"])) {
             INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
             VALUES ($bird, '$tray', '$bin', $battery, '')
         ");
+
+        // clean up any orphaned DB entries silently in the background
+        cleanupOrphans($conn, $target_dir);
 
         echo "STATUS OK";
     } else {
@@ -56,8 +73,14 @@ if (isset($_FILES["video"])) {
         $cmd = "ffmpeg -i " . escapeshellarg($h264_path) . " -c:v libx264 -pix_fmt yuv420p " . escapeshellarg($mp4_path) . " 2>&1";
         shell_exec($cmd);
 
+        // GENERATE THUMBNAIL
+        $thumb_name = pathinfo($filename, PATHINFO_FILENAME) . ".jpg";
+        $thumb_path = $target_dir . $thumb_name;
+
+        $thumb_cmd = "ffmpeg -i " . escapeshellarg($mp4_path) . " -ss 00:00:01 -vframes 1 -update 1 " . escapeshellarg($thumb_path) . " 2>&1";
+        shell_exec($thumb_cmd);
+
         // UPDATE MOST RECENT ROW WITH FILENAME
-        // only update rows that don't already have a video attached
         mysqli_query($conn, "
             UPDATE system_logs
             SET filename = '$mp4_name'
@@ -86,14 +109,12 @@ if (isset($_POST["warning"])) {
 
     $warning = $_POST["warning"];
 
-    // get the real current battery level from the latest row
+    // get real current battery level from latest row
     $bat_result = mysqli_query($conn, "SELECT battery FROM system_logs ORDER BY id DESC LIMIT 1");
     $bat_row    = mysqli_fetch_assoc($bat_result);
     $battery    = $bat_row ? (int)$bat_row['battery'] : 0;
 
     if ($warning == "BIN_LOW") {
-
-        // update latest row to reflect bin is low, keep real battery value
         mysqli_query($conn, "
             UPDATE system_logs
             SET bin_status = 'LOW'
@@ -104,8 +125,6 @@ if (isset($_POST["warning"])) {
     }
 
     if ($warning == "BAT_LOW") {
-
-        // update latest row to reflect battery is low, keep real battery value
         mysqli_query($conn, "
             UPDATE system_logs
             SET battery = $battery
