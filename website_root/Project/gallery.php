@@ -1,11 +1,11 @@
 <?php
- 
+
 $conn = mysqli_connect("localhost", "Sikander", "Sikander77", "feeder");
- 
+
 $result = mysqli_query($conn, "SELECT * FROM system_logs WHERE filename LIKE '%.mp4' ORDER BY id DESC");
- 
+
 $total = mysqli_num_rows($result);
- 
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -14,7 +14,6 @@ $total = mysqli_num_rows($result);
     <title>Bird Feeder · Gallery</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@300;400;600;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
- 
     <style>
         :root {
             --sky-deep:    #0a1628;
@@ -31,9 +30,9 @@ $total = mysqli_num_rows($result);
             --text-dim:    #7a9bbf;
             --text-muted:  #334d6b;
         }
- 
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
         body {
             font-family: 'Nunito', sans-serif;
             background: var(--sky-deep);
@@ -41,8 +40,7 @@ $total = mysqli_num_rows($result);
             min-height: 100vh;
             overflow-x: hidden;
         }
- 
-        /* === SKY BG === */
+
         .sky-bg {
             position: fixed;
             inset: 0;
@@ -54,7 +52,7 @@ $total = mysqli_num_rows($result);
                 linear-gradient(180deg, #06101e 0%, #0a1a35 40%, #0f2545 70%, #1a2a18 100%);
             pointer-events: none;
         }
- 
+
         .stars {
             position: fixed;
             inset: 0;
@@ -62,33 +60,32 @@ $total = mysqli_num_rows($result);
             pointer-events: none;
             overflow: hidden;
         }
- 
+
         .star {
             position: absolute;
             background: white;
             border-radius: 50%;
             animation: twinkle var(--dur) ease-in-out infinite var(--delay);
         }
- 
+
         @keyframes twinkle {
             0%, 100% { opacity: 0.15; }
             50%       { opacity: 0.85; }
         }
- 
+
         .page {
             position: relative;
             z-index: 1;
             max-width: 1100px;
             margin: 0 auto;
         }
- 
-        /* === HEADER === */
+
         .scene-header {
             position: relative;
             padding: 36px 24px 0;
             text-align: center;
         }
- 
+
         .back-link {
             position: absolute;
             top: 40px;
@@ -106,9 +103,9 @@ $total = mysqli_num_rows($result);
             transition: opacity 0.2s;
             z-index: 2;
         }
- 
+
         .back-link:hover { opacity: 1; }
- 
+
         .title-eyebrow {
             font-family: 'DM Mono', monospace;
             font-size: 0.65rem;
@@ -118,7 +115,7 @@ $total = mysqli_num_rows($result);
             opacity: 0.8;
             margin-bottom: 8px;
         }
- 
+
         h1 {
             font-family: 'Righteous', sans-serif;
             font-size: clamp(2.2rem, 6vw, 3.6rem);
@@ -131,23 +128,21 @@ $total = mysqli_num_rows($result);
             filter: drop-shadow(0 0 24px rgba(255,200,66,0.35));
             margin-bottom: 4px;
         }
- 
+
         .title-sub {
             font-size: 0.82rem;
             color: var(--text-dim);
             font-weight: 300;
             letter-spacing: 0.06em;
         }
- 
-        /* SVG branch — shorter version for gallery */
+
         .branch-scene {
             position: relative;
             width: 100%;
             height: 80px;
             margin-top: 8px;
         }
- 
-        /* === TOOLBAR === */
+
         .toolbar {
             display: flex;
             align-items: center;
@@ -156,7 +151,7 @@ $total = mysqli_num_rows($result);
             flex-wrap: wrap;
             gap: 12px;
         }
- 
+
         .toolbar-label {
             font-family: 'DM Mono', monospace;
             font-size: 0.62rem;
@@ -167,13 +162,13 @@ $total = mysqli_num_rows($result);
             align-items: center;
             gap: 7px;
         }
- 
+
         .dot-gold {
             width: 5px; height: 5px; border-radius: 50%;
             background: var(--gold);
             box-shadow: 0 0 7px var(--gold);
         }
- 
+
         .count-pill {
             display: inline-flex;
             align-items: center;
@@ -187,7 +182,7 @@ $total = mysqli_num_rows($result);
             color: var(--gold);
             letter-spacing: 0.1em;
         }
- 
+
         .count-num {
             font-size: 1rem;
             font-weight: 700;
@@ -195,16 +190,14 @@ $total = mysqli_num_rows($result);
             color: var(--gold);
             text-shadow: 0 0 12px var(--gold);
         }
- 
-        /* === GALLERY GRID === */
+
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
             gap: 16px;
             padding: 0 24px 32px;
         }
- 
-        /* === VIDEO CARD === */
+
         .video-card {
             background: var(--panel);
             border: 1px solid var(--border);
@@ -217,12 +210,12 @@ $total = mysqli_num_rows($result);
             animation: fadeUp 0.45s ease both;
             opacity: 0;
         }
- 
+
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(18px); }
             to   { opacity: 1; transform: translateY(0); }
         }
- 
+
         .video-card::before {
             content: '';
             position: absolute;
@@ -232,21 +225,20 @@ $total = mysqli_num_rows($result);
             opacity: 0.28;
             z-index: 1;
         }
- 
+
         .video-card:hover {
             transform: translateY(-5px);
             border-color: rgba(255,200,66,0.28);
             box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255,200,66,0.07);
         }
- 
+
         .video-card video {
             width: 100%;
             display: block;
             background: #000;
             border-radius: 0;
         }
- 
-        /* card number badge */
+
         .card-num {
             position: absolute;
             top: 10px;
@@ -262,7 +254,7 @@ $total = mysqli_num_rows($result);
             letter-spacing: 0.08em;
             backdrop-filter: blur(4px);
         }
- 
+
         .card-footer {
             padding: 12px 16px;
             display: flex;
@@ -270,7 +262,7 @@ $total = mysqli_num_rows($result);
             justify-content: space-between;
             gap: 10px;
         }
- 
+
         .card-time {
             display: flex;
             align-items: center;
@@ -280,32 +272,31 @@ $total = mysqli_num_rows($result);
             color: var(--text-dim);
             letter-spacing: 0.05em;
         }
- 
-        /* cycling bird color dots per card */
+
         .bird-indicator {
             width: 7px; height: 7px;
             border-radius: 50%;
             flex-shrink: 0;
         }
- 
+
         .bird-indicator.gold  { background: var(--gold);  box-shadow: 0 0 7px var(--gold); }
         .bird-indicator.teal  { background: var(--teal);  box-shadow: 0 0 7px var(--teal); }
         .bird-indicator.coral { background: var(--coral); box-shadow: 0 0 7px var(--coral); }
- 
+
         .card-tag {
             font-family: 'DM Mono', monospace;
             font-size: 0.6rem;
             color: var(--text-muted);
             letter-spacing: 0.08em;
         }
- 
+
         /* === CARD ACTION BUTTONS === */
         .card-actions {
             display: flex;
             gap: 8px;
             padding: 0 14px 14px;
         }
- 
+
         .card-btn {
             flex: 1;
             padding: 9px 10px;
@@ -322,22 +313,22 @@ $total = mysqli_num_rows($result);
             transition: transform 0.15s, filter 0.15s;
             text-decoration: none;
         }
- 
+
         .card-btn:hover  { transform: translateY(-1px); filter: brightness(1.12); }
         .card-btn:active { transform: scale(0.96); }
- 
+
         .btn-download {
             background: linear-gradient(135deg, #1a4d6e, #2476a6);
             color: #b0daf0;
             box-shadow: 0 3px 12px rgba(36,118,166,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
         }
- 
+
         .btn-delete {
             background: linear-gradient(135deg, #5a1010, #a02020);
             color: #ffb5b5;
             box-shadow: 0 3px 12px rgba(160,32,32,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
         }
- 
+
         /* === CONFIRM OVERLAY === */
         .confirm-overlay {
             display: none;
@@ -349,9 +340,9 @@ $total = mysqli_num_rows($result);
             align-items: center;
             justify-content: center;
         }
- 
+
         .confirm-overlay.active { display: flex; }
- 
+
         .confirm-box {
             background: #0f1e30;
             border: 1px solid rgba(255, 126, 95, 0.35);
@@ -363,14 +354,14 @@ $total = mysqli_num_rows($result);
             box-shadow: 0 0 60px rgba(255,80,60,0.15);
             animation: popIn 0.2s ease;
         }
- 
+
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.92); }
             to   { opacity: 1; transform: scale(1); }
         }
- 
+
         .confirm-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
- 
+
         .confirm-title {
             font-family: 'Righteous', sans-serif;
             font-size: 1.2rem;
@@ -378,7 +369,7 @@ $total = mysqli_num_rows($result);
             margin-bottom: 6px;
             letter-spacing: 0.04em;
         }
- 
+
         .confirm-msg {
             font-family: 'DM Mono', monospace;
             font-size: 0.72rem;
@@ -387,9 +378,9 @@ $total = mysqli_num_rows($result);
             margin-bottom: 24px;
             line-height: 1.5;
         }
- 
+
         .confirm-btns { display: flex; gap: 10px; }
- 
+
         .confirm-btn {
             flex: 1;
             padding: 11px;
@@ -401,22 +392,22 @@ $total = mysqli_num_rows($result);
             transition: filter 0.15s, transform 0.15s;
             letter-spacing: 0.06em;
         }
- 
+
         .confirm-btn:hover  { filter: brightness(1.1); transform: translateY(-1px); }
         .confirm-btn:active { transform: scale(0.97); }
- 
+
         .confirm-cancel {
             background: rgba(255,255,255,0.06);
             border: 1px solid rgba(255,255,255,0.1);
             color: var(--text-dim);
         }
- 
+
         .confirm-yes {
             background: linear-gradient(135deg, #7a1010, #c02828);
             color: #ffcccc;
             box-shadow: 0 4px 14px rgba(192,40,40,0.35);
         }
- 
+
         /* === TOAST === */
         .toast {
             position: fixed;
@@ -436,17 +427,17 @@ $total = mysqli_num_rows($result);
             z-index: 200;
             white-space: nowrap;
         }
- 
+
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
- 
+
         .toast.error {
             border-color: rgba(255,126,95,0.3);
             color: var(--coral);
         }
- 
+
         /* === EMPTY STATE === */
         .empty-state {
             grid-column: 1 / -1;
@@ -454,16 +445,15 @@ $total = mysqli_num_rows($result);
             padding: 80px 20px;
             color: var(--text-muted);
         }
- 
+
         .empty-state .empty-icon { font-size: 3.5rem; display: block; margin-bottom: 14px; }
- 
+
         .empty-state p {
             font-family: 'DM Mono', monospace;
             font-size: 0.8rem;
             letter-spacing: 0.1em;
         }
- 
-        /* === FOOTER === */
+
         .page-footer {
             text-align: center;
             padding: 8px 0 30px;
@@ -473,30 +463,28 @@ $total = mysqli_num_rows($result);
             letter-spacing: 0.14em;
             text-transform: uppercase;
         }
- 
+
         @media (max-width: 500px) {
             .gallery { grid-template-columns: 1fr; padding: 0 14px 24px; }
             .toolbar { padding: 16px 14px 12px; }
         }
     </style>
 </head>
- 
+
 <body>
- 
+
 <div class="sky-bg"></div>
 <div class="stars" id="stars"></div>
- 
+
 <div class="page">
- 
-    <!-- HEADER -->
+
     <div class="scene-header">
         <a href="index.html" class="back-link">← Dashboard</a>
- 
+
         <p class="title-eyebrow">📼 Recordings</p>
         <h1>Bird Gallery</h1>
         <p class="title-sub">All captured feeder visits</p>
- 
-        <!-- smaller branch scene for gallery -->
+
         <div class="branch-scene">
             <svg viewBox="0 0 1100 80" preserveAspectRatio="xMidYMax meet"
                  xmlns="http://www.w3.org/2000/svg"
@@ -512,22 +500,14 @@ $total = mysqli_num_rows($result);
                     </filter>
                 </defs>
                 <ellipse cx="550" cy="80" rx="500" ry="60" fill="url(#sg2)"/>
- 
-                <!-- main branch — wider for gallery page -->
                 <path d="M0,62 Q150,50 280,54 Q440,58 550,48 Q700,38 860,44 Q980,50 1100,42"
                       stroke="#2a1a0a" stroke-width="6" fill="none" stroke-linecap="round"/>
- 
-                <!-- sub branches -->
                 <path d="M240,53 Q232,34 224,16" stroke="#2a1a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
                 <path d="M820,43 Q830,26 840,10" stroke="#2a1a0a" stroke-width="3.5" fill="none" stroke-linecap="round"/>
- 
-                <!-- leaves -->
                 <ellipse cx="222" cy="13" rx="15" ry="9" fill="#1a3a10" opacity="0.8" transform="rotate(-18,222,13)"/>
                 <ellipse cx="232" cy="6" rx="10" ry="6" fill="#1f4a14" opacity="0.65" transform="rotate(8,232,6)"/>
                 <ellipse cx="842" cy="7" rx="14" ry="8" fill="#1a3a10" opacity="0.8" transform="rotate(14,842,7)"/>
                 <ellipse cx="830" cy="2" rx="9" ry="6" fill="#1f4a14" opacity="0.6" transform="rotate(-8,830,2)"/>
- 
-                <!-- Gold bird left -->
                 <g filter="url(#glow2)" transform="translate(310, 40)" opacity="0.9">
                     <ellipse cx="0" cy="0" rx="10" ry="6" fill="#ffc842"/>
                     <circle cx="8" cy="-4" r="5.5" fill="#ffc842"/>
@@ -538,8 +518,6 @@ $total = mysqli_num_rows($result);
                     <line x1="-1" y1="6" x2="-2" y2="11" stroke="#cc8800" stroke-width="1.5"/>
                     <line x1="3" y1="6" x2="3" y2="11" stroke="#cc8800" stroke-width="1.5"/>
                 </g>
- 
-                <!-- Teal bird center -->
                 <g filter="url(#glow2)" transform="translate(550, 36)" opacity="0.9">
                     <ellipse cx="0" cy="0" rx="10" ry="6" fill="#3effd0"/>
                     <circle cx="8" cy="-4" r="5.5" fill="#3effd0"/>
@@ -550,8 +528,6 @@ $total = mysqli_num_rows($result);
                     <line x1="-1" y1="6" x2="-2" y2="11" stroke="#009977" stroke-width="1.5"/>
                     <line x1="3" y1="6" x2="3" y2="11" stroke="#009977" stroke-width="1.5"/>
                 </g>
- 
-                <!-- Coral bird right, facing left -->
                 <g filter="url(#glow2)" transform="translate(750, 32) scale(-1,1)" opacity="0.88">
                     <ellipse cx="0" cy="0" rx="10" ry="6" fill="#ff7e5f"/>
                     <circle cx="8" cy="-4" r="5.5" fill="#ff7e5f"/>
@@ -562,8 +538,6 @@ $total = mysqli_num_rows($result);
                     <line x1="-1" y1="6" x2="-2" y2="11" stroke="#aa4020" stroke-width="1.5"/>
                     <line x1="3" y1="6" x2="3" y2="11" stroke="#aa4020" stroke-width="1.5"/>
                 </g>
- 
-                <!-- two tiny birds in flight -->
                 <g transform="translate(70, 18)" opacity="0.45">
                     <path d="M0,0 Q5,-4 10,0" stroke="#ffc842" stroke-width="1.8" fill="none" stroke-linecap="round"/>
                     <path d="M0,0 Q5,4 10,0" stroke="#ffc842" stroke-width="1.8" fill="none" stroke-linecap="round"/>
@@ -577,8 +551,7 @@ $total = mysqli_num_rows($result);
             </svg>
         </div>
     </div>
- 
-    <!-- TOOLBAR -->
+
     <div class="toolbar">
         <div class="toolbar-label"><span class="dot-gold"></span> All recordings</div>
         <div class="count-pill">
@@ -586,12 +559,11 @@ $total = mysqli_num_rows($result);
             clip<?php echo $total !== 1 ? 's' : ''; ?> captured
         </div>
     </div>
- 
-    <!-- GALLERY GRID -->
+
     <div class="gallery">
     <?php
     $colors = ['gold', 'teal', 'coral'];
- 
+
     if ($total === 0) {
         echo "
         <div class='empty-state'>
@@ -602,16 +574,21 @@ $total = mysqli_num_rows($result);
     } else {
         $i = 0;
         while ($row = mysqli_fetch_assoc($result)) {
-            $file    = htmlspecialchars($row['filename']);
-            $time    = htmlspecialchars($row['timestamp']);
-            $delay   = round(min($i * 0.06, 0.6), 2);
-            $color   = $colors[$i % 3];
-            $num     = str_pad($total - $i, 3, '0', STR_PAD_LEFT);
- 
+            $file       = htmlspecialchars($row['filename']);
+            $time       = htmlspecialchars($row['timestamp']);
+            $thumb_name = pathinfo($file, PATHINFO_FILENAME) . ".jpg";
+            $thumb_path = "/home/Sikander/uploads/" . $thumb_name;
+            $thumb_src  = file_exists($thumb_path) ? "/uploads/$thumb_name" : "";
+            $delay      = round(min($i * 0.06, 0.6), 2);
+            $color      = $colors[$i % 3];
+            $num        = str_pad($total - $i, 3, '0', STR_PAD_LEFT);
+
+            $poster = $thumb_src ? "poster='$thumb_src'" : "";
+
             echo "
             <div class='video-card' id='card-$file' style='animation-delay:{$delay}s'>
                 <div class='card-num'>#$num</div>
-                <video controls preload='none'>
+                <video controls preload='none' $poster>
                     <source src='/uploads/$file' type='video/mp4'>
                 </video>
                 <div class='card-footer'>
@@ -632,11 +609,11 @@ $total = mysqli_num_rows($result);
     }
     ?>
     </div>
- 
+
     <div class="page-footer">🐦 Bird Feeder Station · Video Archive · <?php echo $total; ?> recordings</div>
- 
+
 </div>
- 
+
 <!-- CONFIRM DELETE OVERLAY -->
 <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
@@ -649,10 +626,10 @@ $total = mysqli_num_rows($result);
         </div>
     </div>
 </div>
- 
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
- 
+
 <script>
 // generate stars
 (function() {
@@ -671,7 +648,7 @@ $total = mysqli_num_rows($result);
         c.appendChild(s);
     }
 })();
- 
+
 // ==========================
 // TOAST
 // ==========================
@@ -682,35 +659,34 @@ function showToast(msg, isError=false) {
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 3000);
 }
- 
+
 // ==========================
 // DELETE CONFIRM
 // ==========================
 let pendingDelete = null;
- 
+
 function confirmDelete(filename) {
     pendingDelete = filename;
     document.getElementById('confirmMsg').innerHTML =
         `This will permanently delete:<br><strong style="color:var(--gold)">${filename}</strong>`;
     document.getElementById('confirmOverlay').classList.add('active');
 }
- 
+
 function closeConfirm() {
     pendingDelete = null;
     document.getElementById('confirmOverlay').classList.remove('active');
 }
- 
-// Close overlay if clicking outside the box
+
 document.getElementById('confirmOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeConfirm();
 });
- 
+
 async function doDelete() {
     if (!pendingDelete) return;
- 
+
     const filename = pendingDelete;
     closeConfirm();
- 
+
     try {
         const res  = await fetch('delete_video.php', {
             method: 'POST',
@@ -718,9 +694,8 @@ async function doDelete() {
             body: 'filename=' + encodeURIComponent(filename)
         });
         const data = await res.json();
- 
+
         if (data.success) {
-            // Fade out and remove the card
             const card = document.getElementById('card-' + filename);
             if (card) {
                 card.style.transition = 'opacity 0.4s, transform 0.4s';
@@ -737,7 +712,6 @@ async function doDelete() {
     }
 }
 </script>
- 
+
 </body>
 </html>
- 
