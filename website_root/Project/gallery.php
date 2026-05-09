@@ -10,6 +10,7 @@ $total = mysqli_num_rows($result);
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Bird Feeder · Gallery</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@300;400;600;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
