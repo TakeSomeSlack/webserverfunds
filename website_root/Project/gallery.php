@@ -299,6 +299,154 @@ $total = mysqli_num_rows($result);
             letter-spacing: 0.08em;
         }
  
+        /* === CARD ACTION BUTTONS === */
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            padding: 0 14px 14px;
+        }
+ 
+        .card-btn {
+            flex: 1;
+            padding: 9px 10px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: transform 0.15s, filter 0.15s;
+            text-decoration: none;
+        }
+ 
+        .card-btn:hover  { transform: translateY(-1px); filter: brightness(1.12); }
+        .card-btn:active { transform: scale(0.96); }
+ 
+        .btn-download {
+            background: linear-gradient(135deg, #1a4d6e, #2476a6);
+            color: #b0daf0;
+            box-shadow: 0 3px 12px rgba(36,118,166,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+ 
+        .btn-delete {
+            background: linear-gradient(135deg, #5a1010, #a02020);
+            color: #ffb5b5;
+            box-shadow: 0 3px 12px rgba(160,32,32,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+ 
+        /* === CONFIRM OVERLAY === */
+        .confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 14, 26, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+ 
+        .confirm-overlay.active { display: flex; }
+ 
+        .confirm-box {
+            background: #0f1e30;
+            border: 1px solid rgba(255, 126, 95, 0.35);
+            border-radius: 20px;
+            padding: 32px 28px;
+            max-width: 340px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(255,80,60,0.15);
+            animation: popIn 0.2s ease;
+        }
+ 
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.92); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+ 
+        .confirm-icon { font-size: 2.4rem; margin-bottom: 12px; display: block; }
+ 
+        .confirm-title {
+            font-family: 'Righteous', sans-serif;
+            font-size: 1.2rem;
+            color: var(--coral);
+            margin-bottom: 6px;
+            letter-spacing: 0.04em;
+        }
+ 
+        .confirm-msg {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            letter-spacing: 0.06em;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+ 
+        .confirm-btns { display: flex; gap: 10px; }
+ 
+        .confirm-btn {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 11px;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: filter 0.15s, transform 0.15s;
+            letter-spacing: 0.06em;
+        }
+ 
+        .confirm-btn:hover  { filter: brightness(1.1); transform: translateY(-1px); }
+        .confirm-btn:active { transform: scale(0.97); }
+ 
+        .confirm-cancel {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dim);
+        }
+ 
+        .confirm-yes {
+            background: linear-gradient(135deg, #7a1010, #c02828);
+            color: #ffcccc;
+            box-shadow: 0 4px 14px rgba(192,40,40,0.35);
+        }
+ 
+        /* === TOAST === */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #0f1e30;
+            border: 1px solid rgba(62,255,208,0.25);
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--teal);
+            letter-spacing: 0.08em;
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 200;
+            white-space: nowrap;
+        }
+ 
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+ 
+        .toast.error {
+            border-color: rgba(255,126,95,0.3);
+            color: var(--coral);
+        }
+ 
         /* === EMPTY STATE === */
         .empty-state {
             grid-column: 1 / -1;
@@ -461,7 +609,7 @@ $total = mysqli_num_rows($result);
             $num     = str_pad($total - $i, 3, '0', STR_PAD_LEFT);
  
             echo "
-            <div class='video-card' style='animation-delay:{$delay}s'>
+            <div class='video-card' id='card-$file' style='animation-delay:{$delay}s'>
                 <div class='card-num'>#$num</div>
                 <video controls preload='none'>
                     <source src='/uploads/$file' type='video/mp4'>
@@ -472,6 +620,10 @@ $total = mysqli_num_rows($result);
                         🕐 $time
                     </div>
                     <span class='card-tag'>🐦 visit</span>
+                </div>
+                <div class='card-actions'>
+                    <a class='card-btn btn-download' href='/uploads/$file' download='$file'>⬇ Download</a>
+                    <button class='card-btn btn-delete' onclick='confirmDelete(\"$file\")'>🗑 Delete</button>
                 </div>
             </div>
             ";
@@ -485,8 +637,24 @@ $total = mysqli_num_rows($result);
  
 </div>
  
+<!-- CONFIRM DELETE OVERLAY -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <span class="confirm-icon">🗑️</span>
+        <div class="confirm-title">Delete Recording?</div>
+        <div class="confirm-msg" id="confirmMsg">This will permanently remove the video<br>and cannot be undone.</div>
+        <div class="confirm-btns">
+            <button class="confirm-btn confirm-cancel" onclick="closeConfirm()">Cancel</button>
+            <button class="confirm-btn confirm-yes" onclick="doDelete()">Delete</button>
+        </div>
+    </div>
+</div>
+ 
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+ 
 <script>
-// generate stars — same as dashboard
+// generate stars
 (function() {
     const c = document.getElementById('stars');
     for (let i = 0; i < 80; i++) {
@@ -503,6 +671,71 @@ $total = mysqli_num_rows($result);
         c.appendChild(s);
     }
 })();
+ 
+// ==========================
+// TOAST
+// ==========================
+function showToast(msg, isError=false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', isError);
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+ 
+// ==========================
+// DELETE CONFIRM
+// ==========================
+let pendingDelete = null;
+ 
+function confirmDelete(filename) {
+    pendingDelete = filename;
+    document.getElementById('confirmMsg').innerHTML =
+        `This will permanently delete:<br><strong style="color:var(--gold)">${filename}</strong>`;
+    document.getElementById('confirmOverlay').classList.add('active');
+}
+ 
+function closeConfirm() {
+    pendingDelete = null;
+    document.getElementById('confirmOverlay').classList.remove('active');
+}
+ 
+// Close overlay if clicking outside the box
+document.getElementById('confirmOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeConfirm();
+});
+ 
+async function doDelete() {
+    if (!pendingDelete) return;
+ 
+    const filename = pendingDelete;
+    closeConfirm();
+ 
+    try {
+        const res  = await fetch('delete_video.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'filename=' + encodeURIComponent(filename)
+        });
+        const data = await res.json();
+ 
+        if (data.success) {
+            // Fade out and remove the card
+            const card = document.getElementById('card-' + filename);
+            if (card) {
+                card.style.transition = 'opacity 0.4s, transform 0.4s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.92)';
+                setTimeout(() => card.remove(), 400);
+            }
+            showToast('✓ Recording deleted');
+        } else {
+            showToast('⚠ Could not delete: ' + (data.error || 'unknown error'), true);
+        }
+    } catch (err) {
+        showToast('⚠ Network error — try again', true);
+    }
+}
 </script>
  
 </body>
