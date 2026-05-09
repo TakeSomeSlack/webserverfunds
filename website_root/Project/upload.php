@@ -56,10 +56,12 @@ if (isset($_FILES["video"])) {
         $cmd = "ffmpeg -i $h264_path -c:v libx264 -pix_fmt yuv420p $mp4_path 2>&1";
         shell_exec($cmd);
 
-        // SAVE VIDEO ENTRY
+        // UPDATE MOST RECENT ROW WITH FILENAME INSTEAD OF INSERTING NEW ONE
         mysqli_query($conn, "
-            INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
-            VALUES (1, 'OK', 'OK', 100, '$mp4_name')
+            UPDATE system_logs
+            SET filename = '$mp4_name'
+            ORDER BY id DESC
+            LIMIT 1
         ");
 
         // DELETE RAW FILE
@@ -73,6 +75,7 @@ if (isset($_FILES["video"])) {
 
     exit;
 }
+
 
 // ==========================
 // HANDLE WARNINGS
