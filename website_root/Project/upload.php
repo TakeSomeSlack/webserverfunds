@@ -18,10 +18,10 @@ if (isset($_POST["data"])) {
 
     if (preg_match('/B:(\d+),T:(\w+),N:(\w+),BAT:(\d+)/', $data, $matches)) {
 
-        $bird = $matches[1];
-        $tray = $matches[2];
-        $bin = $matches[3];
-        $battery = $matches[4];
+        $bird    = (int)$matches[1];
+        $tray    = mysqli_real_escape_string($conn, $matches[2]);
+        $bin     = mysqli_real_escape_string($conn, $matches[3]);
+        $battery = (int)$matches[4];
 
         mysqli_query($conn, "
             INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
@@ -42,7 +42,7 @@ if (isset($_POST["data"])) {
 // ==========================
 if (isset($_FILES["video"])) {
 
-    $filename = basename($_FILES["video"]["name"]);
+    $filename  = basename($_FILES["video"]["name"]);
     $h264_path = $target_dir . $filename;
 
     if (move_uploaded_file($_FILES["video"]["tmp_name"], $h264_path)) {
@@ -53,18 +53,20 @@ if (isset($_FILES["video"])) {
         $mp4_name = pathinfo($filename, PATHINFO_FILENAME) . ".mp4";
         $mp4_path = $target_dir . $mp4_name;
 
-        $cmd = "ffmpeg -i $h264_path -c:v libx264 -pix_fmt yuv420p $mp4_path 2>&1";
+        $cmd = "ffmpeg -i " . escapeshellarg($h264_path) . " -c:v libx264 -pix_fmt yuv420p " . escapeshellarg($mp4_path) . " 2>&1";
         shell_exec($cmd);
 
-        // UPDATE MOST RECENT ROW WITH FILENAME INSTEAD OF INSERTING NEW ONE
+        // UPDATE MOST RECENT ROW WITH FILENAME
+        // only update rows that don't already have a video attached
         mysqli_query($conn, "
             UPDATE system_logs
             SET filename = '$mp4_name'
+            WHERE filename = ''
             ORDER BY id DESC
             LIMIT 1
         ");
 
-        // DELETE RAW FILE
+        // DELETE RAW H264 FILE
         unlink($h264_path);
 
         echo "CONVERTED TO: " . $mp4_name;
@@ -84,24 +86,38 @@ if (isset($_POST["warning"])) {
 
     $warning = $_POST["warning"];
 
+    // get the real current battery level from the latest row
+    $bat_result = mysqli_query($conn, "SELECT battery FROM system_logs ORDER BY id DESC LIMIT 1");
+    $bat_row    = mysqli_fetch_assoc($bat_result);
+    $battery    = $bat_row ? (int)$bat_row['battery'] : 0;
+
     if ($warning == "BIN_LOW") {
+
+        // update latest row to reflect bin is low, keep real battery value
         mysqli_query($conn, "
-            INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
-            VALUES (0, 'OK', 'LOW', 0, '')
+            UPDATE system_logs
+            SET bin_status = 'LOW'
+            ORDER BY id DESC
+            LIMIT 1
         ");
         echo "BIN WARNING STORED";
     }
 
     if ($warning == "BAT_LOW") {
+
+        // update latest row to reflect battery is low, keep real battery value
         mysqli_query($conn, "
-            INSERT INTO system_logs (bird, tray_status, bin_status, battery, filename)
-            VALUES (0, 'OK', 'OK', 5, '')
+            UPDATE system_logs
+            SET battery = $battery
+            ORDER BY id DESC
+            LIMIT 1
         ");
         echo "BAT WARNING STORED";
     }
 
     exit;
 }
+
 
 echo "NO DATA RECEIVED";
 
