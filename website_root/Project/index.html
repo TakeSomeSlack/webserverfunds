@@ -2,117 +2,702 @@
 <html>
 <head>
     <title>Bird Feeder Dashboard</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Nunito:wght@300;400;600;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+ 
     <style>
+        :root {
+            --sky-deep:   #0a1628;
+            --sky-mid:    #0d2240;
+            --sky-dawn:   #1a3a5c;
+            --horizon:    #2d1b0e;
+            --gold:       #ffc842;
+            --gold-glow:  rgba(255, 200, 66, 0.22);
+            --gold-faint: rgba(255, 200, 66, 0.07);
+            --teal:       #3effd0;
+            --teal-glow:  rgba(62, 255, 208, 0.2);
+            --teal-faint: rgba(62, 255, 208, 0.06);
+            --coral:      #ff7e5f;
+            --coral-glow: rgba(255, 126, 95, 0.2);
+            --panel:      rgba(10, 22, 42, 0.75);
+            --panel-edge: rgba(255, 200, 66, 0.1);
+            --text:       #e8f4ff;
+            --text-dim:   #7a9bbf;
+            --text-muted: #334d6b;
+            --border:     rgba(255, 200, 66, 0.12);
+        }
+ 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
         body {
-            margin: 0;
-            font-family: "Segoe UI", Arial;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: #333;
+            font-family: 'Nunito', sans-serif;
+            background: var(--sky-deep);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-
-        .container {
-            max-width: 700px;
-            margin: auto;
-            padding: 20px;
+ 
+        /* === SKY BACKGROUND === */
+        .sky-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% 110%, rgba(255, 140, 50, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 70% 80%, rgba(255, 80, 60, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse 100% 60% at 50% 100%, rgba(45, 27, 14, 0.6) 0%, transparent 55%),
+                linear-gradient(180deg, #06101e 0%, #0a1a35 40%, #0f2545 70%, #1a2a18 100%);
+            pointer-events: none;
         }
-
+ 
+        /* floating stars */
+        .stars {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+ 
+        .star {
+            position: absolute;
+            width: 2px; height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+            opacity: 0.6;
+        }
+ 
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50%       { opacity: 0.9; transform: scale(1.4); }
+        }
+ 
+        .page {
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+ 
+        /* === HEADER WITH BRANCH SCENE === */
+        .scene-header {
+            position: relative;
+            padding: 36px 24px 0;
+            text-align: center;
+            overflow: hidden;
+        }
+ 
+        .title-wrap {
+            position: relative;
+            z-index: 2;
+        }
+ 
+        .title-eyebrow {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: var(--teal);
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+ 
         h1 {
-            color: white;
+            font-family: 'Righteous', sans-serif;
+            font-size: clamp(2.6rem, 8vw, 4.2rem);
+            letter-spacing: 0.04em;
+            line-height: 1;
+            background: linear-gradient(160deg, #fff9e6 0%, var(--gold) 50%, var(--coral) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 24px rgba(255, 200, 66, 0.35));
+            margin-bottom: 4px;
+        }
+ 
+        .title-sub {
+            font-size: 0.82rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            letter-spacing: 0.06em;
+        }
+ 
+        /* SVG branch scene sits between title and content */
+        .branch-scene {
+            position: relative;
+            width: 100%;
+            height: 120px;
+            margin-top: 10px;
+        }
+ 
+        /* === LIVE PILL === */
+        .live-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(62, 255, 208, 0.08);
+            border: 1px solid rgba(62, 255, 208, 0.22);
+            border-radius: 99px;
+            padding: 4px 12px;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--teal);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin: 4px auto 24px;
+            width: fit-content;
+            display: flex;
+        }
+ 
+        .live-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 8px var(--teal);
+            animation: blink 2s ease-in-out infinite;
+        }
+ 
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.15; }
+        }
+ 
+        /* === WARNING === */
+        #warningBox {
+            margin: 0 20px 16px;
+            background: rgba(255, 80, 60, 0.1);
+            border: 1px solid rgba(255, 80, 60, 0.3);
+            border-left: 3px solid var(--coral);
+            color: #ffb5a5;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-family: 'DM Mono', monospace;
+        }
+ 
+        #warningBox.hidden { display: none; }
+ 
+        /* === MAIN LAYOUT === */
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 14px;
+            padding: 0 20px 24px;
+        }
+ 
+        /* === GLASS PANELS === */
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+ 
+        .panel:hover {
+            border-color: rgba(255, 200, 66, 0.25);
+            box-shadow: 0 0 30px rgba(255, 200, 66, 0.06);
+        }
+ 
+        /* golden shimmer top edge */
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            opacity: 0.35;
+        }
+ 
+        .panel-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+ 
+        .dot-gold {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--gold);
+            box-shadow: 0 0 7px var(--gold);
+        }
+ 
+        .dot-teal {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--teal);
+            box-shadow: 0 0 7px var(--teal);
+        }
+ 
+        /* === STATUS PANEL — left column, both rows === */
+        .panel-status {
+            grid-column: 1;
+            grid-row: 1 / 3;
+        }
+ 
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 200, 66, 0.08);
+            border-radius: 13px;
+            margin-bottom: 9px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+ 
+        .stat-item:last-child { margin-bottom: 0; }
+ 
+        .stat-item:hover {
+            background: rgba(255, 200, 66, 0.05);
+            border-color: rgba(255, 200, 66, 0.18);
+        }
+ 
+        .stat-emoji { font-size: 1.5rem; flex-shrink: 0; }
+ 
+        .stat-body { flex: 1; min-width: 0; }
+ 
+        .stat-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.58rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+ 
+        .stat-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+ 
+        .batt-bar-wrap {
+            margin-top: 5px;
+            height: 4px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+ 
+        .batt-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 0.9s ease;
+        }
+ 
+        /* === VIDEO PANEL — right column, top row === */
+        .panel-video {
+            grid-column: 2;
+            grid-row: 1;
+            padding: 14px;
+        }
+ 
+        .panel-video video {
+            width: 100%;
+            border-radius: 10px;
+            display: block;
+            background: #000;
+        }
+ 
+        .no-video-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 36px 20px;
+            color: var(--text-muted);
+            font-family: 'DM Mono', monospace;
+            font-size: 0.75rem;
             text-align: center;
         }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-
-        .warning {
-            background: red;
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            display: none;
-            font-weight: bold;
-        }
-
-        .buttons {
+ 
+        .no-video-state span { font-size: 2.6rem; }
+ 
+        /* === ACTIONS PANEL — right column, bottom row === */
+        .panel-actions {
+            grid-column: 2;
+            grid-row: 2;
             display: flex;
-            justify-content: space-around;
+            flex-direction: column;
+            gap: 10px;
+            padding: 18px;
         }
-
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .feed { background: #4CAF50; color: white; }
-        .refresh { background: #2196F3; color: white; }
-
-        video {
+ 
+        .btn {
             width: 100%;
-            border-radius: 12px;
+            padding: 13px 14px;
+            border: none;
+            border-radius: 13px;
+            font-size: 0.88rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            transition: transform 0.15s, filter 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+ 
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+ 
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn:hover::after { opacity: 0.05; }
+        .btn:active { transform: scale(0.97); }
+ 
+        .btn-feed {
+            background: linear-gradient(135deg, #b36a00, #ffaa00, #ffd060);
+            color: #3a1a00;
+            box-shadow: 0 4px 18px rgba(255, 170, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+ 
+        .btn-refresh {
+            background: linear-gradient(135deg, #006655, #00c49a, #3effd0);
+            color: #002a20;
+            box-shadow: 0 4px 18px rgba(0, 196, 154, 0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+ 
+        .btn-gallery {
+            background: linear-gradient(135deg, #7a2e00, #d45a20, #ff8c50);
+            color: #2a0a00;
+            box-shadow: 0 4px 18px rgba(212, 90, 32, 0.3), inset 0 1px 0 rgba(255,255,255,0.15);
+            text-decoration: none;
+            display: flex;
+        }
+ 
+        /* === LOADING === */
+        .loading {
+            font-family: 'DM Mono', monospace;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 16px;
+            animation: flicker 1.6s ease-in-out infinite;
+        }
+ 
+        @keyframes flicker {
+            0%, 100% { opacity: 0.3; }
+            50%       { opacity: 0.9; }
+        }
+ 
+        /* === FOOTER === */
+        .page-footer {
+            text-align: center;
+            padding: 6px 0 28px;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.58rem;
+            color: var(--text-muted);
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+ 
+        /* === RESPONSIVE === */
+        @media (max-width: 540px) {
+            .layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            .panel-status { grid-column: 1; grid-row: auto; }
+            .panel-video  { grid-column: 1; grid-row: auto; }
+            .panel-actions { grid-column: 1; grid-row: auto; flex-direction: row; }
+            .btn { flex: 1; }
         }
     </style>
 </head>
-
+ 
 <body>
-
-<div class="container">
-
-    <h1>Bird Feeder System</h1>
-
-    <div id="warningBox" class="warning"></div>
-
-    <div class="card" id="data">Loading...</div>
-
-    <div class="card" id="videoBox">No video</div>
-
-    <div class="card buttons">
-        <button class="feed" onclick="sendCommand('F')">Feed</button>
-        <button class="refresh" onclick="refreshStatus()">Refresh Status</button>
-        <a href="gallery.php"><button>Gallery</button></a>
+ 
+<!-- Sky layers -->
+<div class="sky-bg"></div>
+<div class="stars" id="stars"></div>
+ 
+<div class="page">
+ 
+    <!-- HEADER SCENE -->
+    <div class="scene-header">
+        <div class="title-wrap">
+            <p class="title-eyebrow">🌅 Garden Monitor</p>
+            <h1>Bird Feeder</h1>
+            <p class="title-sub">Live backyard feed</p>
+        </div>
+ 
+        <!-- SVG branch with birds silhouette -->
+        <div class="branch-scene">
+            <svg viewBox="0 0 860 120" preserveAspectRatio="xMidYMax meet"
+                 xmlns="http://www.w3.org/2000/svg"
+                 style="position:absolute;bottom:0;left:0;width:100%;height:100%">
+                <!-- horizon glow -->
+                <defs>
+                    <radialGradient id="sunGlow" cx="50%" cy="100%" r="50%">
+                        <stop offset="0%" stop-color="#ff8c30" stop-opacity="0.35"/>
+                        <stop offset="100%" stop-color="#ff8c30" stop-opacity="0"/>
+                    </radialGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                    </filter>
+                </defs>
+                <ellipse cx="430" cy="120" rx="340" ry="80" fill="url(#sunGlow)"/>
+ 
+                <!-- main branch -->
+                <path d="M0,95 Q120,80 220,85 Q340,90 430,78 Q540,66 660,72 Q760,78 860,70"
+                      stroke="#2a1a0a" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <!-- sub branch left -->
+                <path d="M160,84 Q150,60 140,40" stroke="#2a1a0a" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <!-- sub branch right -->
+                <path d="M650,71 Q660,48 672,30" stroke="#2a1a0a" stroke-width="4" fill="none" stroke-linecap="round"/>
+                <!-- leaves cluster left -->
+                <ellipse cx="138" cy="36" rx="18" ry="11" fill="#1a3a10" opacity="0.85" transform="rotate(-20,138,36)"/>
+                <ellipse cx="148" cy="28" rx="12" ry="8" fill="#1f4a14" opacity="0.7" transform="rotate(10,148,28)"/>
+                <!-- leaves cluster right -->
+                <ellipse cx="674" cy="26" rx="16" ry="10" fill="#1a3a10" opacity="0.85" transform="rotate(15,674,26)"/>
+                <ellipse cx="662" cy="20" rx="11" ry="7" fill="#1f4a14" opacity="0.7" transform="rotate(-10,662,20)"/>
+ 
+                <!-- Bird 1 — perched left, wings folded -->
+                <g filter="url(#glow)" transform="translate(200, 72)" opacity="0.92">
+                    <!-- body -->
+                    <ellipse cx="0" cy="0" rx="11" ry="7" fill="#ffc842"/>
+                    <!-- head -->
+                    <circle cx="9" cy="-5" r="6" fill="#ffc842"/>
+                    <!-- beak -->
+                    <polygon points="14,-5 18,-3 14,-2" fill="#ff8c30"/>
+                    <!-- eye -->
+                    <circle cx="11" cy="-6" r="1.2" fill="#0a1628"/>
+                    <!-- wing detail -->
+                    <path d="M-8,0 Q-4,-6 4,-4" stroke="#e6a500" stroke-width="1.5" fill="none" opacity="0.7"/>
+                    <!-- tail -->
+                    <path d="M-11,0 L-18,4 M-11,1 L-17,7" stroke="#e6a500" stroke-width="2" stroke-linecap="round"/>
+                    <!-- legs -->
+                    <line x1="-2" y1="7" x2="-3" y2="13" stroke="#cc8800" stroke-width="1.5"/>
+                    <line x1="3" y1="7" x2="3" y2="13" stroke="#cc8800" stroke-width="1.5"/>
+                </g>
+ 
+                <!-- Bird 2 — perched center, teal -->
+                <g filter="url(#glow)" transform="translate(420, 65)" opacity="0.9">
+                    <ellipse cx="0" cy="0" rx="10" ry="6" fill="#3effd0"/>
+                    <circle cx="8" cy="-5" r="5.5" fill="#3effd0"/>
+                    <polygon points="13,-5 17,-3 13,-2" fill="#00c49a"/>
+                    <circle cx="10" cy="-6" r="1.1" fill="#0a1628"/>
+                    <path d="M-7,0 Q-3,-5 3,-3" stroke="#00c49a" stroke-width="1.5" fill="none" opacity="0.6"/>
+                    <path d="M-10,0 L-16,4 M-10,1 L-16,6" stroke="#00c49a" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="-2" y1="6" x2="-3" y2="12" stroke="#009977" stroke-width="1.5"/>
+                    <line x1="3" y1="6" x2="3" y2="12" stroke="#009977" stroke-width="1.5"/>
+                </g>
+ 
+                <!-- Bird 3 — perched right, coral, facing left -->
+                <g filter="url(#glow)" transform="translate(600, 60) scale(-1,1)" opacity="0.88">
+                    <ellipse cx="0" cy="0" rx="10" ry="6" fill="#ff7e5f"/>
+                    <circle cx="8" cy="-4" r="5.5" fill="#ff7e5f"/>
+                    <polygon points="13,-4 17,-2 13,-1" fill="#d45a30"/>
+                    <circle cx="10" cy="-5" r="1.1" fill="#0a1628"/>
+                    <path d="M-7,0 Q-3,-5 3,-3" stroke="#d45a30" stroke-width="1.5" fill="none" opacity="0.6"/>
+                    <path d="M-10,0 L-16,3 M-10,1 L-15,6" stroke="#d45a30" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="-2" y1="6" x2="-2" y2="12" stroke="#aa4020" stroke-width="1.5"/>
+                    <line x1="3" y1="6" x2="3" y2="12" stroke="#aa4020" stroke-width="2"/>
+                </g>
+ 
+                <!-- tiny bird in flight top right -->
+                <g transform="translate(760, 18)" opacity="0.55">
+                    <path d="M0,0 Q6,-5 12,0" stroke="#ffc842" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <path d="M0,0 Q6,5 12,0" stroke="#ffc842" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <circle cx="6" cy="0" r="2.5" fill="#ffc842"/>
+                </g>
+ 
+                <!-- tiny bird top left -->
+                <g transform="translate(90, 25)" opacity="0.5">
+                    <path d="M0,0 Q5,-4 10,0" stroke="#3effd0" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <path d="M0,0 Q5,4 10,0" stroke="#3effd0" stroke-width="2" fill="none" stroke-linecap="round"/>
+                    <circle cx="5" cy="0" r="2.2" fill="#3effd0"/>
+                </g>
+            </svg>
+        </div>
     </div>
-
+ 
+    <!-- LIVE PILL -->
+    <div style="text-align:center; margin-bottom: 20px;">
+        <div class="live-pill">
+            <span class="live-dot"></span>&nbsp;feeder active
+        </div>
+    </div>
+ 
+    <!-- WARNING -->
+    <div id="warningBox" class="hidden">⚠ <span id="warningText"></span></div>
+ 
+    <!-- MAIN GRID -->
+    <div class="layout">
+ 
+        <!-- STATUS — left, full height -->
+        <div class="panel panel-status">
+            <div class="panel-label"><span class="dot-gold"></span> Feeder Status</div>
+            <div id="data"><div class="loading">— waking up the feeder —</div></div>
+        </div>
+ 
+        <!-- VIDEO — right top -->
+        <div class="panel panel-video">
+            <div class="panel-label"><span class="dot-teal"></span> Latest Footage</div>
+            <div id="videoBox">
+                <div class="no-video-state"><span>🎥</span>Waiting for visitors…</div>
+            </div>
+        </div>
+ 
+        <!-- ACTIONS — right bottom -->
+        <div class="panel panel-actions">
+            <div class="panel-label" style="margin-bottom:10px"><span class="dot-gold"></span> Controls</div>
+            <button class="btn btn-feed" onclick="sendCommand('F')">🌾&nbsp; Dispense Feed</button>
+            <button class="btn btn-refresh" onclick="refreshStatus()">🔄&nbsp; Refresh Status</button>
+            <a href="gallery.php" style="text-decoration:none;">
+                <button class="btn btn-gallery">🎞&nbsp; Video Gallery</button>
+            </a>
+        </div>
+ 
+    </div>
+ 
+    <div class="page-footer">🐦 Bird Feeder Station · Live</div>
+ 
 </div>
-
+ 
 <script>
-
+ 
+// === generate stars ===
+(function() {
+    const container = document.getElementById('stars');
+    for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        s.style.cssText = `
+            left: ${Math.random() * 100}%;
+            top:  ${Math.random() * 65}%;
+            --dur:   ${2 + Math.random() * 4}s;
+            --delay: ${-Math.random() * 5}s;
+            width:  ${Math.random() > 0.8 ? 3 : 2}px;
+            height: ${Math.random() > 0.8 ? 3 : 2}px;
+        `;
+        container.appendChild(s);
+    }
+})();
+ 
 let lastVideo = "";
-
+let lastTimestamp = "";  // tracks the last known timestamp from the feeder
+ 
+function showWarning(msg) {
+    const warningBox = document.getElementById("warningBox");
+    warningBox.classList.remove("hidden");
+    document.getElementById("warningText").innerText = msg;
+}
+ 
+function clearWarning() {
+    const warningBox = document.getElementById("warningBox");
+    warningBox.classList.add("hidden");
+}
+ 
+function renderStatus(data) {
+    const batt = parseInt(data.battery) || 0;
+    const battColor = batt > 50 ? '#3effd0' : batt > 20 ? '#ffc842' : '#ff7e5f';
+    const battGlow  = batt > 50 ? 'rgba(62,255,208,0.6)' : batt > 20 ? 'rgba(255,200,66,0.6)' : 'rgba(255,126,95,0.6)';
+ 
+    document.getElementById("data").innerHTML = `
+        <div class="stat-item">
+            <span class="stat-emoji">🐦</span>
+            <div class="stat-body">
+                <div class="stat-label">Bird detected</div>
+                <div class="stat-value">${data.bird}</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-emoji">🫙</span>
+            <div class="stat-body">
+                <div class="stat-label">Tray</div>
+                <div class="stat-value">${data.tray}</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-emoji">📦</span>
+            <div class="stat-body">
+                <div class="stat-label">Bin</div>
+                <div class="stat-value">${data.bin}</div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-emoji">🔋</span>
+            <div class="stat-body">
+                <div class="stat-label">Battery — ${batt}%</div>
+                <div class="stat-value" style="color:${battColor};text-shadow:0 0 10px ${battGlow}">${batt}%</div>
+                <div class="batt-bar-wrap">
+                    <div class="batt-fill batt-bar-fill" style="width:${batt}%;background:${battColor};box-shadow:0 0 8px ${battGlow}"></div>
+                </div>
+            </div>
+        </div>
+        <div class="stat-item">
+            <span class="stat-emoji">🕐</span>
+            <div class="stat-body">
+                <div class="stat-label">Last update</div>
+                <div class="stat-value" style="font-size:0.82rem">${data.time}</div>
+            </div>
+        </div>
+    `;
+}
+ 
 // ==========================
 // LOAD DATA
 // ==========================
-async function loadData(updateVideo=false) {
+async function loadData(updateVideo=false, checkConnection=false) {
     let res = await fetch("get_data.php");
     let data = await res.json();
-
-    let warningBox = document.getElementById("warningBox");
-
-    if (data.warning !== "") {
-        warningBox.style.display = "block";
-        warningBox.innerText = data.warning;
-    } else {
-        warningBox.style.display = "none";
+ 
+    // Connection check: if timestamp hasn't changed after a refresh, feeder didn't respond
+    if (checkConnection) {
+        if (data.time === lastTimestamp) {
+            showWarning("⚠️ Cannot connect to feeder — it may be offline or not on WiFi");
+            return; // still show old data, just don't update
+        } else {
+            // timestamp changed — feeder responded, clear any connection warning
+            if (document.getElementById("warningText").innerText.includes("Cannot connect")) {
+                clearWarning();
+            }
+        }
     }
-
-    document.getElementById("data").innerHTML = `
-        Bird: ${data.bird} <br>
-        Tray: ${data.tray} <br>
-        Bin: ${data.bin} <br>
-        Battery: ${data.battery}% <br>
-        Time: ${data.time}
-    `;
-
+ 
+    // Store timestamp for next connection check
+    lastTimestamp = data.time;
+ 
+    // Show feeder warnings (low battery, low food) or clear
+    if (data.warning !== "") {
+        showWarning(data.warning);
+    } else {
+        clearWarning();
+    }
+ 
+    renderStatus(data);
+ 
     if (data.filename && (updateVideo || data.filename !== lastVideo)) {
         lastVideo = data.filename;
-
+ 
         document.getElementById("videoBox").innerHTML = `
             <video controls>
                 <source src="/uploads/${data.filename}">
@@ -120,7 +705,7 @@ async function loadData(updateVideo=false) {
         `;
     }
 }
-
+ 
 // ==========================
 // SEND COMMAND
 // ==========================
@@ -133,33 +718,37 @@ function sendCommand(cmd) {
         body: "cmd=" + cmd
     });
 }
-
+ 
 // ==========================
 // REFRESH (WAKE + GET STATUS)
 // ==========================
 function refreshStatus() {
-
-    // Step 1: Wake system
+ 
+    // Step 1: Snapshot the current timestamp before we do anything
+    // so we can detect if the feeder actually responded
+    const timestampBefore = lastTimestamp;
+ 
+    // Step 2: Wake system
     sendCommand("W");
-
-    // Step 2: Wait for wake
+ 
+    // Step 3: Wait for wake
     setTimeout(() => {
-
-        // Step 3: Request status
+ 
+        // Step 4: Request status
         sendCommand("G");
-
-        // Step 4: Wait for response
+ 
+        // Step 5: Wait for response, then load with connection check enabled
         setTimeout(() => {
-            loadData(true);
+            loadData(true, true);
         }, 1500);
-
+ 
     }, 1000);
 }
-
-// INITIAL LOAD
+ 
+// INITIAL LOAD (no connection check on first load)
 loadData(true);
-
+ 
 </script>
-
+ 
 </body>
 </html>
